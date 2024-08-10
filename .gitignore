@@ -1,0 +1,4 @@
+.env
+venv
+*.gguf
+/llama3.1_recommendations

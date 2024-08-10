@@ -1,0 +1,15 @@
+FROM C:/Users/Geraldus Wilsen/Documents/neo4j_live/llama3.1_recommendations/unsloth.Q4_K_M.gguf
+
+TEMPLATE """Below are some instructions that describe some tasks. Write responses that appropriately complete each request.{{ if .Prompt }}
+
+### Instruction:
+{{ .Prompt }}
+
+{{ end }}### Response:
+{{ .Response }}<|end_of_text|>"""
+
+PARAMETER stop "<|start_header_id|>"
+PARAMETER stop "<|eot_id|>"
+PARAMETER stop "<|end_header_id|>"
+PARAMETER stop "<|end_of_text|>"
+PARAMETER stop "<|reserved_special_token_"

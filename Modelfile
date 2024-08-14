@@ -1,4 +1,4 @@
-FROM C:/Users/Geraldus Wilsen/Documents/neo4j_live/llama3.1_recommendations/unsloth.Q4_K_M.gguf
+FROM C:/Users/Geraldus Wilsen/Documents/neo4j_live/gguf/unsloth.Q4_K_M.gguf
 
 TEMPLATE """Below are some instructions that describe some tasks. Write responses that appropriately complete each request.{{ if .Prompt }}
 

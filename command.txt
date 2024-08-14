@@ -1,0 +1,20 @@
+1. open cmd and go to you folder
+ex cd C:\Users\Geraldus Wilsen\Documents\neo4j_live
+
+2. ollama create -f Modelfile {username}/{model_name}
+ex: ollama create -f Modelfile projectwilsen/llama3.1-8b-neo4j-live-4b-gguf
+
+3. ollama run {username}/{model_name}
+ex: ollama run projectwilsen/llama3.1-8b-neo4j-live-4b-gguf
+
+4. cd C:\Users\{username}\.ollama
+ex: cd C:\Users\Geraldus Wilsen\.ollama
+
+5. type id_ed25519.pub
+
+6. copy your key
+
+7. go to settings -> ollama keys -> click Add Ollama Public Key
+
+8. ollama push {username}/{model_name}
+ex: ollama push projectwilsen/llama3.1-8b-neo4j-live-4b-gguf

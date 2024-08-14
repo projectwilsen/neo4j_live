@@ -1,4 +1,6 @@
 .env
 venv
 *.gguf
-/llama3.1_recommendations
+/gguf
+local_ollama.ipynb
+questions_note.txt

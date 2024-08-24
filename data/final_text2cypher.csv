@@ -1,0 +1,784 @@
+question,type,cypher,syntax_error,timeout,returns_results
+What is the name of the companies that John works for?,Simple Retrieval Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,False
+What company is worker named Alice associated with??,Simple Retrieval Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person {name: 'Alice'}) RETURN c.name AS company_name,False,False,False
+What industry does worker named Bob live in?,Simple Retrieval Queries,MATCH (p:Person {name: 'Bob'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i.name AS Industry,False,False,False
+What industry is worker named Bob employing from?,Simple Retrieval Queries,MATCH (p:Person {name: 'Bob'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i,False,False,False
+List the names of all workers with Bachelor degrees,Simple Retrieval Queries,MATCH (p:Person)-[:EDUCATED_AT]->(e) WHERE p.degree = 'Bachelor' RETURN p.name AS workers_with_bachelor_degrees,False,False,False
+Which countries do workers who speak Spanish live in United States,Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'})-[:LIVES_IN]->(c:Country {name: 'United States'}) RETURN c,False,False,False
+In which countries do workers named Alice live?,Simple Retrieval Queries, MATCH (p:Person {name: 'Alice'})-[:LIVES_IN]->(c:Country) RETURN c.name ,False,False,False
+What are the names of workers who speak French?,Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) RETURN p.name,False,False,True
+How many workers live in Canada and work in the Financial Services?,Simple Retrieval Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country), (p)-[:WORKS_IN]->(co:Company)-[:IS_IN]->(i:Industry) WHERE c.name = 'Canada' AND i.name = 'Financial Services' RETURN count(p);",False,False,True
+How many workers with Master degrees work in the Sofware development?,Simple Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) WHERE p.degree = 'Master' RETURN count(DISTINCT p) AS num_workers,False,False,True
+What are the names of workers who live in the United States,Simple Retrieval Queries,MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person) RETURN DISTINCT p.name,False,False,True
+What are the names of workers with Bachelor degrees,Simple Retrieval Queries,MATCH (n:Person {degree: 'Bachelor'}) RETURN n.name,False,False,True
+What is the average age of workers who work in the America,Simple Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry)-[:IS_located_IN]->(c:Country {name : 'America'}) RETURN avg(p.age),False,False,True
+Which countries do workers who speak English live in?,Simple Retrieval Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c,False,False,True
+What is the maximum age of workers who live in the United States?,Simple Retrieval Queries,MATCH (p:Person)-[:LIVES_IN]->(c:Country) WHERE c.name = 'United States' RETURN max(toInteger(p.age)) as maximum_age,False,False,True
+What company is the worker named Paul Lukes associated with?,Simple Retrieval Queries,MATCH (p:Person {name: 'Paul Lukes'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,True
+Which persons live in the country 'United States'?,Complex Retrieval Queries,MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person) RETURN DISTINCT p,False,False,True
+List the industries of the companies where person 'Paul Lukes' works,Complex Retrieval Queries,MATCH (p:Person {name: 'Paul Lukes'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i.name,False,False,True
+Find the persons who work in companies with an industry 'Advertising Services',Complex Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) RETURN p,False,False,True
+Which persons speak 'English' and live in 'United States'?,Complex Retrieval Queries,MATCH (n:Person)-[:SPEAKS]->(c:Language {name: 'English'}) WHERE exists {(n)-[:LIVES_IN]->(:Country {name: 'United States'})} RETURN n;,False,False,True
+What is the name of the company where person 'Haris Nadeem' works?,Complex Retrieval Queries,MATCH (p:Person {name: 'Haris Nadeem'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,True
+List the industries of the companies where persons with 'Master' degree work,Complex Retrieval Queries,"
+       MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) WHERE p.degree='Master' RETURN  DISTINCT i.name as Industry_Name,p.name as person_name,c.name AS Company_Name,p.degree AS person_degree,p.joining_year AS joining_year,p.age AS person_age",False,False,True
+Which persons are educated at 'University of South Florida'?,Complex Retrieval Queries,"MATCH (s:School {name: 'University of South Florida'}), (p:Person)-[:EDUCATED_AT]->(s) RETURN p.name",False,False,True
+Find the persons who work in companies that are in 'IT Services and IT Consulting' industry,Complex Retrieval Queries,MATCH (n:Person)-[:WORKS_IN]->(m:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'IT Services and IT Consulting' RETURN n,False,False,True
+What are the names of the companies where person 'Lindsey Boland' works?,Complex Retrieval Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person {name: 'Lindsey Boland'}) RETURN c.name,False,False,True
+Which persons live in 'United States' and are educated at 'California College of the Arts'?,Complex Retrieval Queries,MATCH (n:Person)-[:LIVES_IN]->(c:Country {name:'United States'}) WHERE exists{ (n)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'})} RETURN n.name,False,False,False
+What are the names of the schools that persons with 'Bachelor' degree are educated at?,Complex Retrieval Queries,MATCH (p:Person {degree: 'Bachelor'})-[:EDUCATED_AT]->(s:School) RETURN s.name,False,False,True
+List the industries of the companies where persons with 'Bachelor' degree work,Complex Retrieval Queries,MATCH (p:Person {degree: 'Bachelor'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name,False,False,True
+Which persons are older than 30 and work in 'Advertising Services',Complex Retrieval Queries,"
+MATCH (p:Person)-[r:WORKS_IN]->(i:Industry) WHERE p.age>""30"" AND i.name=""Advertising Services"" RETURN p,r,i",False,False,False
+Find the persons who speak 'English' and are educated at 'University of South Florida'?,Complex Retrieval Queries,"MATCH (person:Person)-[:EDUCATED_AT]->(edu:School {name: 'University of South Florida'}), (person)-[:SPEAKS]->(lang:Language {name: 'English'}) RETURN person",False,False,True
+What are the names of the countries where persons who work in 'Higher Education' industry live?,Complex Retrieval Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}) RETURN c.name,False,False,True
+List the companies that are in 'Software Development' industry,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN c.name,False,False,True
+Which persons are younger than 30 and live in 'United States'?,Complex Retrieval Queries,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) WHERE toInteger(p.age) < 30 RETURN p,False,False,True
+What are the names of the industries of the companies where person 'Haris Nadeem' works?,Complex Retrieval Queries,MATCH (p:Person {name: 'Haris Nadeem'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name,False,False,True
+Find the persons who work in companies that are in 'Hospitals and Health Care' industry,Complex Retrieval Queries,MATCH p=(n:Person)-[:WORKS_IN]->(m:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) RETURN p,False,False,True
+What are the names of the schools that persons who live in 'United States' are educated at?,Complex Retrieval Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country {name: 'United States'}), (p)-[:EDUCATED_AT]->(s:School)
+RETURN DISTINCT s.name",False,False,True
+Who are the top 5 workers by age with a degree in 'Bachelor' from 'California College of the Arts' who speak English and work in Real Estate industry?,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}) WHERE p.degree = 'Bachelor' RETURN p ORDER BY p.age DESC LIMIT 5",False,False,False
+"What are the names of top 3 workers, who work in 'Financial Services', have a 'Master' degree and joined in '2018'?",Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Financial Services'}) WHERE p.degree = 'Master' AND p.joining_year = '2018' RETURN p.name ORDER BY p.name ASC LIMIT 3,False,False,True
+What is the count of workers in 'Software Development' industry with age greater than '30'?,Simple Aggregation Queries,"MATCH (i:Industry {name: 'Software Development'})<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person)
+WHERE toInteger(p.age) > 30
+RETURN count(p) AS worker_count",False,False,False
+Who are the workers with 'Master' degree who work in companies with 'IT Services and IT Consulting' industry and have age greater than '28'?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) WHERE p.degree = 'Master' AND p.age > '28' RETURN p.name,False,False,True
+"What are the names of workers, who speak 'English', live in 'United States' and work in 'Higher Education' industry?",Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'English'}) MATCH (p)-[:LIVES_IN]->(count:Country {name: 'United States'}) MATCH (p)-[:WORKS_IN]->(comp:Company)-[:IS_IN]->(ind:Industry {name: 'Higher Education'}) RETURN p.name,False,False,True
+How many workers are there in 'Hospitals and Health Care' industry who live in 'Canada'?,Simple Aggregation Queries,MATCH (c:Country {name: 'Canada'})-[:LIVES_IN]-(p:Person)-[:WORKS_IN]-(:Company)-[:IS_IN]-(i:Industry {name: 'Hospitals and Health Care'}) RETURN p,False,False,False
+Who are the top 3 workers with highest age in 'IT Services and IT Consulting' industry who have 'Bachelor' degree?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'IT Services and IT Consulting'}) WHERE p.degree = 'Bachelor' RETURN p ORDER BY p.age DESC LIMIT 3,False,False,True
+List the names of the workers who are working in companies 'Toolbox Creative' and 'Search Engine People'?,Simple Aggregation Queries,"MATCH (c:Company {name: 'Toolbox Creative'}) 
+MATCH (n:Company {name: 'Search Engine People'}) 
+RETURN c.name, n.name",False,False,True
+"What are the names of top 5 workers who are in the 'Higher Education' industry and live in 'United States', 'Germany' or 'Canada'?",Simple Aggregation Queries,"
+MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(ind:Industry {name: 'Higher Education'}),(p)-[:LIVES_IN]->(cou:Country) WHERE (cou.name = 'United States' OR cou.name = 'Germany' OR cou.name = 'Canada') RETURN DISTINCT p.name ORDER BY p.name LIMIT 5",False,False,True
+Who are the workers who are working in the companies of 'Advertising Services' industry and have 'Bachelor' degree?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) WHERE p.degree = 'Bachelor' RETURN p,False,False,True
+"What are the names of the workers, having age greater than '30' and have 'Master' degree, working in 'Real Estate'?",Simple Aggregation Queries,"
+            MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name:'Real Estate'}) WHERE p.degree='Master' and p.age>'30' RETURN p.name",False,False,True
+Who are the workers in 'United States' and 'Canada' with age less than '25'?,Simple Aggregation Queries,"MATCH (p:Person)-[:LIVES_IN]->(country:Country)
+WHERE (country.name = 'United States' OR country.name = 'Canada') 
+  AND toInteger(p.age) < 25
+RETURN p.name AS worker_name, p.age AS worker_age, country.name AS country",False,False,False
+What are the names of top 3 workers who are in 'Software Development' industry and have 'Master' degree?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry {name: 'Software Development'}) WHERE p.degree = 'Master' RETURN p.name ORDER BY p.name LIMIT 3,False,False,True
+How many workers are working in companies 'Toolbox Creative' and 'Search Engine People' combined?,Simple Aggregation Queries,"MATCH (c:Company {name: 'Toolbox Creative'})
+    OPTIONAL MATCH (p:Person)-[:WORKS_IN]->(c)
+
+MATCH (d:Company {name: 'Search Engine People'})
+    OPTIONAL MATCH (p1:Person)-[:WORKS_IN]->(d)
+
+RETURN count(p) + count(p1) as combinedCount",False,False,True
+What chunk id contains the question: 'Which workers speak German?'?,Simple Aggregation Queries,MATCH (c:Chunk {question: 'Which workers speak German?'}) RETURN c.id,False,False,False
+How many workers have a 'Master' degree in 'Software Development' industry who live in 'Germany' and have age greater than '30'?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) WHERE p.degree = 'Master' AND p.age > '30' AND exists{ (p)-[:LIVES_IN]->(:Country {name: 'Germany'})} RETURN count(p) as count,False,False,True
+"What are the names of the workers with 'Master' degree, joined in '2017' and speak 'English'?",Simple Aggregation Queries,"MATCH (n:Person {degree: 'Master', joining_year: '2017'})-[:SPEAKS]->(l:Language {name: 'English'}) RETURN n.name",False,False,True
+What are the top 5 industries by the number of workers who are living in 'United States'?,Simple Aggregation Queries,"MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry)
+RETURN i.name, COUNT(p)
+ORDER BY COUNT(p) DESC
+LIMIT 5",False,False,True
+What is the average age of workers with a 'Bachelor' degree working in 'Financial Services' industry?,Simple Aggregation Queries,"MATCH (p:Person {degree: 'Bachelor'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'})
+RETURN avg(toInteger(p.age)) AS average_age
+",False,False,False
+How many workers are there in 'Software Development' industry who live in 'Germany' and 'Canada'?,Simple Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}), (c)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(:Country {name: 'Germany'}) MATCH (c)-[:IS_IN]->(:Industry {name: 'Software Development'}), (c)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(:Country {name: 'Canada'}) RETURN count(DISTINCT p) as people",False,False,True
+List the all languages that person named Alice speaks,Pathfinding Queries,MATCH (n:Person {name: 'Alice'})-[:SPEAKS]->(m:Language) RETURN DISTINCT m.name,False,False,False
+What are the top 5 languages that person 'Alice' speaks?,Pathfinding Queries,"MATCH (:Person {name: 'Alice'})-[:SPEAKS]->(l:Language) RETURN l.name LIMIT 5
+",False,False,False
+What are the names of the companies in the Advertising Services industry that Lindsey Boland works in?,Complex Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry { name: 'Advertising Services' }), (p:Person { name: 'Lindsey Boland' })-[:WORKS_IN]->(c) RETURN c.name",False,False,True
+What are the names of the countries where Emily lives?,Complex Aggregation Queries,MATCH (n:Person {name: 'Emily'})-[:LIVES_IN]->(c:Country) RETURN c.name,False,False,False
+what is the industry of Search Engine People company?,Complex Aggregation Queries,"MATCH (company:Company {name: 'Search Engine People'}) MATCH (company)-[relationship]-(industry:Industry) RETURN type(relationship),industry.name",False,False,True
+"In the entire database, which companies are in the software development industry?",Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN c,False,False,True
+Find all persons who live in 'United States' order by age limit first 5 results,Verbose query,MATCH (p:Person)-[:LIVES_IN]->(c:Country) WHERE c.name = 'United States' RETURN p ORDER BY p.age LIMIT 5,False,False,True
+"What is the name of the first 3 schools, in any order",Verbose query,"
+MATCH (s:School) RETURN s LIMIT 3",False,False,True
+Find the company of person 'Charlie Wang' works in,Verbose query,MATCH (p:Person {name: 'Charlie Wang'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+Find the industry of the company named 'Toolbox Creative' order by industry name in ascending order limit first 3 results,Verbose query,MATCH (c:Company {name: 'Toolbox Creative'})-[:IS_IN]->(i:Industry) RETURN i.name as industry ORDER BY i.name ASC LIMIT 3,False,False,True
+Find first 5 workers who speak 'English' order by their degree in descending order,Verbose query,MATCH (p:Person)-[r:SPEAKS]->(l:Language) WHERE l.name='English' RETURN p ORDER BY p.degree DESC LIMIT 5,False,False,True
+What are the names of the companies in 'Real Estate' industry,Verbose query,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Real Estate' RETURN c.name,False,False,True
+Find the country where the person named 'Kallias Mitrotatos' lives in,Verbose query,MATCH (p:Person {name: 'Kallias Mitrotatos'})-[:LIVES_IN]->(c:Country) RETURN c,False,False,False
+What are the nationalities of all the workers in Search Engine People company,,"MATCH (p:Person)-[:WORKS_IN]->(c:Company {name: 'Search Engine People'})
+MATCH (p)-[:LIVES_IN]->(country:Country)
+RETURN DISTINCT country.name AS nationality
+",False,False,False
+What companies do workers who speak Spanish work in?,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (p)-[:WORKS_IN]->(c:Company) RETURN c.name",False,False,True
+What companies are workers named Alice associated with?,Complex Retrieval Queries,MATCH (p:Person {name: 'Alice'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+Which workers speak English and work in the technology industry? List the first 3 workers,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) MATCH (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Software Development'}) RETURN p LIMIT 3,False,False,True
+Where do workers named John live?,Complex Retrieval Queries,"
+MATCH (p:Person {name: 'John'} )-[:LIVES_IN]->(c:Country) RETURN c.name",False,False,False
+How many workers in Hospital and Health Care industry are there?,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'})<-[:WORKS_IN]-(p:Person) RETURN COUNT(p) AS num_workers,False,False,True
+What companies are located in the technology industry and have workers named Emily?,Complex Retrieval Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Software Development'}) RETURN c,False,False,False
+Which workers live in Canada and speak German?,Complex Retrieval Queries,MATCH (p:Person)-[:LIVES_IN]->(c:Country)-[:SPEAKS]->(l:Language {name: 'German'}) WHERE c.name = 'Canada' RETURN p,False,False,False
+What industries are workers named Michael associated with?,Complex Retrieval Queries,MATCH (p:Person {name: 'Michael'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name,False,False,False
+How many workers speak French and live in the United States?,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}), (p)-[:LIVES_IN]->(c:Country {name: 'United States'}) RETURN count(p) as num_workers",False,False,True
+What companies are in the higher education industry and have workers who speak English?,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Higher Education'}) WHERE exists{ (c)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'})} RETURN c.name AS Company,False,False,True
+Which workers are educated at the University of South Florida and work in the financial services industry?,Complex Retrieval Queries,MATCH (n:Person)-[:EDUCATED_AT]->(:School {name: 'University of South Florida'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN n,False,False,False
+Where do workers named David live? ,Complex Retrieval Queries,MATCH (p:Person {name: 'David'})-[:LIVES_IN]->(c:Country) RETURN c,False,False,False
+How many workers are there in the software development industry? ,Complex Retrieval Queries,MATCH (w:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Software Development' RETURN COUNT(DISTINCT w) AS num_workers,False,False,True
+What companies do workers named Olivia work in?,Complex Retrieval Queries,MATCH (p:Person {name: 'Olivia'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,False
+Which workers speak Spanish and live in the United States? ,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'}) WHERE exists{ (p)-[:LIVES_IN]->(:Country {name: 'United States'})} RETURN p,False,False,True
+How many workers are educated at the University of South Florida?,Complex Retrieval Queries,MATCH (p:Person)-[:EDUCATED_AT]->(s:School {name: 'University of South Florida'}) RETURN COUNT(DISTINCT p) as count,False,False,True
+What companies are located in the advertising services industry and have workers named Ava?,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) WHERE exists{ (p:Person {name: 'Ava'})-[:WORKS_IN]->(c) } RETURN c,False,False,False
+Which workers live in Canada and speak English,Complex Retrieval Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country)-[:SPEAKS]->(l:Language)
+WHERE c.name = 'Canada' AND l.name = 'English'
+RETURN p",False,False,False
+What are the top 5 companies in the Advertising Services industry?,Simple Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'})
+RETURN c.name AS company, count(*) AS connection_count
+ORDER BY connection_count DESC
+LIMIT 5
+
+",False,False,False
+Which 3 workers are employed at companies in the IT Services and IT Consulting industry?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'IT Services and IT Consulting'}) RETURN p LIMIT 3,False,False,True
+How many workers in Hospital and Health Care industries are older than 30?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) WHERE toInteger(p.age) > 30 RETURN count(p) AS num_workers,False,False,True
+What are the names of the top 5 schools that workers in the Financial Services industry have graduated from?,Simple Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}), (p:Person)-[:EDUCATED_AT]->(s:School), (p)-[:WORKS_IN]->(c)
+RETURN s.name, COUNT(DISTINCT p) as num_graduates
+ORDER BY num_graduates DESC
+LIMIT 5",False,False,True
+Which workers in the Real Estate industry speak English?,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}) RETURN p",False,False,True
+What are the top 5 languages spoken by workers in the Software Development industry?,Simple Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}), (p:Person)-[:WORKS_IN]->(c:Company), (p:Person)-[:SPEAKS]->(l:Language)
+RETURN l.name AS `language`, COUNT(DISTINCT p.name) AS `count`
+ORDER BY COUNT(DISTINCT p.name) DESC
+LIMIT 5",False,False,True
+What companies do workers named John work in?,Simple Aggregation Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,False
+What are the names of the top 3 countries where workers in the Higher Education industry live?,Simple Aggregation Queries,"MATCH (n:Person)-[:WORKS_IN]->(m:Company)-[:IS_IN]->(i:Industry {name: 'Higher Education'}),
+      (n)-[:LIVES_IN]->(co:Country)
+RETURN co.name AS country_name, COUNT(n) AS worker_count
+ORDER BY worker_count DESC
+LIMIT 3
+",False,False,False
+How many workers in the Advertising Services industry have a Master's degree?,Simple Aggregation Queries,MATCH (worker:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) WHERE worker.degree = 'Master' RETURN COUNT(worker) AS num_workers,False,False,True
+Which workers in the Financial Services industry speak German?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'German'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN p.name,False,False,False
+What are the names of the top 5 companies that workers in the IT Services and IT Consulting industry have worked for?,Simple Aggregation Queries,MATCH (w:Company)-[:IS_IN]->(:Industry { name: 'IT Services and IT Consulting' }) RETURN DISTINCT w.name AS company ORDER BY w.name ASC LIMIT 5,False,False,True
+Which 3 workers in the Hospital and Health Care industries have graduated from California College of the Arts?,Simple Aggregation Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}), (p)-[:EDUCATED_AT]->(s:School {name: 'California College of the Arts'}) RETURN p LIMIT 3",False,False,False
+Which workers in the Real Estate industry speak Spanish?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'Spanish'}) MATCH (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate'}) RETURN p,False,False,False
+What are the names of the top 3 companies in the Software Development industry that workers named Emily have worked for?,Simple Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'})
+MATCH (c)<-[:WORKS_IN]-(p:Person {name: 'Emily'})
+RETURN c.name AS company_name, COUNT(p) AS emily_count
+ORDER BY emily_count DESC
+LIMIT 3
+",False,False,False
+What are the names of the top 5 countries where workers in the Advertising Services industry live?,Simple Aggregation Queries,"MATCH (i:Industry {name: 'Advertising Services'})<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(co:Country)
+RETURN co.name AS country_name, COUNT(p) AS worker_count
+ORDER BY worker_count DESC
+LIMIT 5
+",False,False,False
+What are the names of the top 5 languages spoken by workers in the Financial Services industry?,Simple Aggregation Queries,"MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN l.name, COUNT(DISTINCT p) as Speaks ORDER BY Speaks DESC LIMIT 5",False,False,True
+Which workers in the Higher Education industry speak French?,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}) RETURN p",False,False,True
+How many workers in the IT Services and IT Consulting industry are older than 30?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) WHERE p.age > '30' RETURN count(p) AS count,False,False,True
+What are the names of the top 3 schools that workers in the Software Development industry have graduated from?,Simple Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}), (p:Person)-[:EDUCATED_AT]->(s:School), (p)-[:WORKS_IN]->(c)
+RETURN s.name, COUNT(DISTINCT p) as num_graduates
+ORDER BY num_graduates DESC
+LIMIT 3",False,False,True
+What companies do workers named Alice work in?,Simple Aggregation Queries,MATCH (p:Person {name: 'Alice'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+What is the highest degree earned by workers at Search Engine People? List first 3 workers who have the highest degree,Pathfinding Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company {name: 'Search Engine People'}) OPTIONAL MATCH (p)-[:EDUCATED_AT]->(s:School) RETURN p.name, s.name, p.degree ORDER BY p.degree DESC LIMIT 3",False,False,True
+List top 5 companies where workers who live in the United States work,Pathfinding Queries,"MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(com:Company) RETURN com.name as Company, COUNT(DISTINCT p) as worker ORDER BY worker DESC LIMIT 5",False,False,True
+What are the names of the industry where workers who speak Czech work? List first 3 industry names,Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Czech'}) WITH p MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name LIMIT 3,False,False,True
+List first 3 countries where workers who speak English live,Pathfinding Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c.name LIMIT 3,False,False,True
+What are the names of the workers who speak English and work in the Advertising Services industry?,Pathfinding Queries,"MATCH (n:Person)-[:SPEAKS {name:'English'}]->(), (n)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name:'Advertising Services'}) RETURN n.name AS names",False,False,False
+What are the names of the workers who live in the United States and are associated with the Advertising Services industry?,Pathfinding Queries,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'})} RETURN distinct p.name,False,False,True
+What companies do workers who speak Czech and live in the United States work in?,Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'Czech'}) MATCH (p:Person)-[:LIVES_IN]->(coun:Country {name: 'United States'}) MATCH (p:Person)-[:WORKS_IN]->(comp:Company) RETURN comp,False,False,True
+List workers who speak English and work at Search Engine People,Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}) WITH p MATCH (p:Person)-[:WORKS_IN]->(:Company {name: 'Search Engine People'}) RETURN p.name,False,False,False
+What are the names of the industries that workers associated with Centennial College work in?,Pathfinding Queries,"
+				MATCH (p:Person)-[:EDUCATED_AT]->(s:School {name: 'Centennial College'}), (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(ind:Industry) RETURN DISTINCT ind.name",False,False,True
+In which countries do workers who speak Czech live?,Pathfinding Queries,MATCH (l:Language {name: 'Czech'})<-[:SPEAKS]-(p:Person)-[:LIVES_IN]->(c:Country) RETURN c.name,False,False,True
+List top 5 workers who speak English and live in Canada,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}), (p)-[:LIVES_IN]->(c:Country {name: 'Canada'}) RETURN p.name ORDER BY p.name LIMIT 5",False,False,True
+List top 5 companies in the Advertising Services industry,Pathfinding Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'})
+MATCH (c)<-[:WORKS_IN]-(p:Person)
+RETURN c.name AS company_name, COUNT(p) AS worker_count
+ORDER BY worker_count DESC
+LIMIT 5
+",False,False,False
+List the names of workers who work at Search Engine People and are educated at Centennial College.,Pathfinding Queries,MATCH (w:Person)-[:WORKS_IN]->(:Company {name: 'Search Engine People'})-[:EDUCATED_AT]->(:School {name: 'Centennial College'}) RETURN w.name,False,False,False
+List workers who live in the United States and are educated at Centennial College,Pathfinding Queries,"
+MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}), (p)-[:EDUCATED_AT]->(:School {name: 'Centennial College'} ) RETURN p",False,False,False
+What are the names of workers who speak English and are educated at Centennial College?,Pathfinding Queries,"MATCH (n:Person)-[:EDUCATED_AT]->(:School {name: ""Centennial College""}) WHERE n.degree IS NOT NULL MATCH (n)-[:SPEAKS]->(:Language {name: ""English""})  RETURN n.name",False,False,False
+List first 3 workers who speak English and work in the United States,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}), (p)-[:WORKS_IN]->(c:Company), (p)-[:LIVES_IN]->(cou:Country {name: 'United States'}) RETURN DISTINCT p LIMIT 3",False,False,True
+List top 5 companies that workers who speak English work in,Pathfinding Queries,"MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c.name, count(*) as freq ORDER BY freq DESC LIMIT 5",False,False,True
+List first 3 industries that workers who speak Czech work in,Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Czech'})-[:WORKS_IN*0..1]->(:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i LIMIT 3,False,False,False
+What are the names of the countries that workers who speak Czech live?,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Czech'}), (p)-[:LIVES_IN]->(c:Country) RETURN DISTINCT c.name",False,False,True
+List the names of workers who work at Search Engine People and live in the United States,Pathfinding Queries,"MATCH (c:Company {name: 'Search Engine People'})
+MATCH (c)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(co:Country {name: 'United States'})
+OPTIONAL MATCH (p)-[degrees:EDUCATED_AT]->(edu:School)
+RETURN DISTINCT p.name AS worker_name",False,False,False
+Find all people who speak French and are older than 28,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) WHERE p.age > 28 RETURN p,False,False,False
+Get top 3 companies in the advertising industry,Complex Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'})
+MATCH (c)<-[:WORKS_IN]-(p:Person)
+RETURN c.name AS company_name, COUNT(p) AS worker_count
+ORDER BY worker_count DESC
+LIMIT 3
+",False,False,False
+Get first 5 countries with most English speakers,Complex Aggregation Queries,"MATCH (l:Language {name: 'English'})<-[s:SPEAKS]-(p:Person)-[r:LIVES_IN]->(c:Country) RETURN count(r) as speaker_count, c.name as country ORDER BY speaker_count DESC LIMIT 5",False,False,True
+Find all people named John who work for a company in the software development industry,Complex Aggregation Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Software Development'}) RETURN p,False,False,False
+Find top 5 languages spoken by people in the United States,Complex Aggregation Queries,"MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN l.name, count(DISTINCT p) as speakers ORDER BY speakers DESC LIMIT 5",False,False,True
+Find first 3 companies in the financial services industry,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN c LIMIT 3,False,False,True
+What industry is the company 'Toolbox Creative' in,Complex Aggregation Queries,"MATCH (i:Industry)<-[:IS_IN]-(c:Company {name: 'Toolbox Creative'}) RETURN c.name, i.name",False,False,True
+Get the country where people from the 'California College of the Arts' live,Complex Aggregation Queries,MATCH (s:School {name: 'California College of the Arts'})<-[r:EDUCATED_AT]-(p:Person)-[:LIVES_IN]->(c:Country) RETURN c,False,False,True
+Find top 5 people who speak English and have a master's degree and sort by the age,Complex Aggregation Queries,"MATCH (n:Person)-[:SPEAKS]->(la:Language {name: 'English'})
+WHERE n.degree = 'Master'
+RETURN n.name AS person_name, n.age AS person_age
+ORDER BY toInteger(n.age) ASC
+LIMIT 5
+",False,False,False
+Find first 3 companies in the higher education industry,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Higher Education'}) RETURN c.name LIMIT 3,False,False,True
+Find top 3 countries where people in the real estate industry live,Complex Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'})
+  WITH c
+  MATCH (p:Person)-[:WORKS_IN]->(c)
+  WITH p
+  MATCH (p)-[:LIVES_IN]->(cou:Country)
+  RETURN cou.name AS country, COUNT(p) AS count
+  ORDER BY count DESC
+  LIMIT 3",False,False,True
+Find first 5 companies in the IT services and IT consulting industry,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) RETURN c LIMIT 5,False,False,True
+Find top 5 people named Emily who work in the financial services industry,Complex Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry { name: 'Financial Services' }), (p:Person { name: 'Emily' })-[:WORKS_IN]->(c) RETURN p LIMIT 5",False,False,False
+Find first 3 companies in the software development industry,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN c LIMIT 3,False,False,True
+Find first 3 countries where people who speak French live,Complex Aggregation Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'French'}) RETURN c.name LIMIT 3,False,False,True
+Get top 5 languages spoken by people in the software development industry,Complex Aggregation Queries,"MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN l.name, COUNT(DISTINCT p) as numb ORDER BY numb DESC LIMIT 5",False,False,True
+Get top 5 companies in the IT services and IT consulting industry,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) RETURN c.name ORDER BY c.name LIMIT 5,False,False,True
+Find top 3 people who speak Spanish and have a bachelor's degree,Complex Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'}) WHERE p.degree = 'Bachelor' RETURN p.name, p.degree, l.name ORDER BY p.name LIMIT 3",False,False,True
+Find first 5 countries with most Spanish speakers,Complex Aggregation Queries,"MATCH (l:Language {name: 'Spanish'})<-[s:SPEAKS]-(p:Person)-[r:LIVES_IN]->(c:Country)
+            RETURN c.name as country_name, COUNT(p) as count
+            ORDER BY count DESC
+            LIMIT 5",False,False,True
+What languages do workers who live in the United States and work for companies in the Technology industry speak?,Verbose query,MATCH (p:Person)-[:SPEAKS]->(l:Language) WHERE exists { (p)-[:LIVES_IN]->(:Country {name: 'United States'}) } AND exists { (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Technology'}) } RETURN l,False,False,False
+What companies in the Advertising Services industry have workers who live in Canada?,Verbose query,MATCH (p:Person)-[:LIVES_IN]->(c:Country {name: 'Canada'})-[:WORKS_IN]->(com:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) RETURN (com.name) AS `companies name`,False,False,False
+Which workers who are fluent in English and work for companies in the Higher Education industry have a Master's degree?,Verbose query,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}) } AND p.degree = 'Master' RETURN p,False,False,True
+What countries do workers in the Real Estate industry and are fluent in Spanish live in?,Verbose query,"MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}) RETURN DISTINCT c.name",False,False,False
+Which workers who work for companies in the Financial Services industry and are fluent in German have a Bachelor's degree,Verbose query,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}), (p)-[:EDUCATED_AT]->(:School), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) WHERE p.degree = 'Bachelor' RETURN p",False,False,False
+What industries do companies that have workers who live in the United States and speak French operate in?,Verbose query,"MATCH (c:Company)-[:IS_IN]->(i:Industry), p=(c)<-[:WORKS_IN]-(worker:Person)-[:SPEAKS]->(l:Language {name: 'French'})-[:LIVES_IN]->(country:Country {name: 'United States'}) RETURN i.name",False,False,False
+What are the names of the workers who work for companies in the Software Development industry and are fluent in English?,Verbose query,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN p.name",False,False,True
+What countries do workers who are fluent in English and work for companies in the IT Services and IT Consulting industry live in? ,Verbose query,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}), (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:WORKS_IN]->(c), (p)-[:LIVES_IN]->(co:Country) RETURN co",False,False,True
+What languages do workers who work for companies in the Hospitals and Health Care industry speak?,Verbose query,MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN l,False,False,True
+What companies in the Higher Education industry have workers who live in the United States and are fluent in Spanish? ,Verbose query,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (p)-[:LIVES_IN]->(:Country {name: 'United States'}), (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}) RETURN c",False,False,False
+What are the names of the companies that operate in the Technology industry and have workers who are fluent in French? First 2 names only,Verbose query,"MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Technology'}), (c:Company)<-[:WORKS_IN]-(person:Person)-[:SPEAKS]->(lang:Language)
+WHERE lang.name = 'French'
+RETURN DISTINCT c.name LIMIT 2",False,False,False
+What are the names of the workers who are fluent in English and work for companies in the Technology industry? First 3 names only,Verbose query,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Technology'}) RETURN DISTINCT p.name LIMIT 3,False,False,False
+What countries do workers in the Financial Services industry and are fluent in English live in? First 5 names only,Verbose query,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry {name: 'Financial Services'}) WHERE exists{ (p)-[:SPEAKS]->(:Language {name: 'English'}) } WITH DISTINCT p MATCH (p)-[:LIVES_IN]->(c:Country) RETURN c.name LIMIT 5,False,False,True
+What are the names of the industries that companies operate in if they have workers who live in the United States and speak Spanish? First 3 only,Verbose query,MATCH (l:Language {name: 'Spanish'})<-[sp:SPEAKS]-(p:Person)-[r:LIVES_IN]->(:Country {name: 'United States'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(ind:Industry) RETURN DISTINCT ind.name LIMIT 3,False,False,False
+What companies do workers who are fluent in English and live in Canada work for? First 5 names only,Verbose query,"MATCH (l:Language {name: 'English'})-[:IS_SPOKEN_BY]->(p:Person)-[:LIVES_IN]->(c:Country {name: 'Canada'})-[:IS_LIVED_BY]->(p)<-[:IS_WORKED_IN_BY]-(comp:Company)
+      RETURN DISTINCT comp.name
+      LIMIT 5",False,False,False
+What languages do workers who work for companies in the Advertising Services industry speak? First 5 names only,Verbose query, MATCH (p:Person)-[:SPEAKS]->(l:Language) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) } RETURN DISTINCT l.name LIMIT 5 ,False,False,True
+What companies in the Software Development industry have workers who live in the United States and speak German? First 3 names only,Verbose query,"MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Software Development'}),
+      (p:Person)-[:WORKS_IN]->(c),
+      (p)-[:LIVES_IN]->(:Country {name: 'United States'}),
+      (p)-[:SPEAKS]->(:Language {name: 'German'})
+RETURN DISTINCT c.name AS company_name
+ORDER BY company_name
+LIMIT 3
+",False,False,False
+What countries do workers who work for companies in the Real Estate industry and are fluent in French live in? First 3 names only,Verbose query,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}), (c)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'French'}), (p)-[:LIVES_IN]->(country:Country) RETURN DISTINCT country.name LIMIT 3",False,False,False
+What workers are fluent in English and work for companies that operate in the Hospitals and Health Care industry? First 3 names only,Verbose query,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) RETURN DISTINCT p.name LIMIT 3,False,False,False
+What languages do workers who work for companies in the IT Services and IT Consulting industry and have a Bachelor's degree speak? First 3 names only,Verbose query,MATCH (p:Person)-[:SPEAKS]->(l:Language) WHERE (p.degree = 'Bachelor') AND exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) } RETURN DISTINCT l.name LIMIT 3,False,False,True
+What workers speak French and live in the US and first 10 results,Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'French'})-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN p LIMIT 10,False,False,False
+Find workers who speak English as first 5 results,Simple Retrieval Queries,"MATCH (n:Person)-[:SPEAKS]->(a:Language {name: 'English'}) RETURN n, a LIMIT 5",False,False,True
+"Get French workers in Canada, first 10 results",Simple Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}),
+      (p)-[:LIVES_IN]->(c:Country {name: 'Canada'})
+RETURN p.name AS person_name
+LIMIT 10
+",False,False,False
+What are toolbox Creative company industries as top 10 results,Simple Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE c.name = 'Toolbox Creative' RETURN i LIMIT 10,False,False,True
+"What industry does Company Search Engine People belong to, first 10 results",Simple Retrieval Queries,MATCH(c:Company {name: 'Search Engine People'})<-[:IS_IN]-(ind:Industry) RETURN * LIMIT 10,False,False,False
+Which workers are employed at Toolbox Creative and first 3 results,Simple Retrieval Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company {name: 'Toolbox Creative'}) RETURN p, c LIMIT 3",False,False,True
+What is the name of all workers with Master degree in first 10 results,Simple Retrieval Queries,MATCH (n:Person {degree: 'Master'}) RETURN n LIMIT 10,False,False,True
+"Find workers at company Search Engine People, first 5 results",Simple Retrieval Queries,"
+            MATCH (p:Person)-[:WORKS_IN]->(:Company {name: 'Search Engine People'}) RETURN p LIMIT 5",False,False,True
+Get the list of workers who joined in the year 2017 and with first 10 results,Simple Retrieval Queries,MATCH (p:Person {joining_year: '2017'}) RETURN p LIMIT 10,False,False,True
+In what industry does workers with name Paul Lukes work and first 10 results,Simple Retrieval Queries,MATCH (p:Person {name: 'Paul Lukes'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i.name LIMIT 10,False,False,True
+Which workers speak English and first 5 results,Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN p LIMIT 5,False,False,True
+"Find workers associated with industry IT Services and IT Consulting, first 10 results",Simple Retrieval Queries,MATCH (w:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'IT Services and IT Consulting' RETURN w LIMIT 10,False,False,True
+In what country does the worker with name Alice live in the first result,Simple Retrieval Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person {name: 'Alice'}) RETURN c ORDER BY c.name LIMIT 1,False,False,False
+Who are all workers who speak Spanish as first 5 results,Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'}) RETURN p LIMIT 5,False,False,True
+List workers who are associated with California College of the Arts School and have first 10 results,Simple Retrieval Queries,MATCH (p:Person)-[:EDUCATED_AT]->(s:School {name: 'California College of the Arts'}) RETURN p LIMIT 10,False,False,True
+What workers are associated with the US and have age 28 as first 10 results,Simple Retrieval Queries,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) WHERE p.age = '28' RETURN p LIMIT 10,False,False,True
+What are workers at the company Toolbox Creative and have degree Master as first 10 results,Simple Retrieval Queries,MATCH (n:Person)-[:WORKS_IN]->(:Company {name: 'Toolbox Creative'}) WHERE n.degree='Master' RETURN n LIMIT 10,False,False,True
+Get the list of all workers having age 25 and first 10 results,Simple Retrieval Queries,MATCH (n:Person {age: '25'}) RETURN n.name LIMIT 10,False,False,True
+What workers having degree Bachelor work at Company Search Engine People with first 5 results,Simple Retrieval Queries,MATCH (c:Company {name: 'Search Engine People'})-[r:WORKS_IN]-(p:Person) WHERE p.degree = 'Bachelor' RETURN p ORDER BY p.name ASC LIMIT 5,False,False,True
+What are the names of the companies that are in the industry of IT Services and IT Consulting and have workers with a Master degree? get top 5 results,Complex Retrieval Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}), (p:Person {degree: 'Master'})-[:WORKS_IN]->(c) RETURN DISTINCT c.name LIMIT 5",False,False,True
+Which workers live in Canada and speak German? get first 3 results,Complex Retrieval Queries,MATCH (p:Person)-[:LIVES_IN]->(c:Country {name: 'Canada'}) MATCH (p)-[:SPEAKS]->(l:Language {name: 'German'}) RETURN p LIMIT 3,False,False,False
+What are the names of the workers who speak French and work in the industry of Financial Services? get top 5 results,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'French'})
+MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'})
+RETURN  DISTINCT p.name
+LIMIT 5",False,False,True
+What are the names of the companies that are in the industry of Advertising Services and are located in the United States? get top 5 results,Complex Retrieval Queries,"MATCH (company:Company)-[:IS_IN]->(industry:Industry {name: 'Advertising Services'}), (company:Company)-[:IS_LOCATED_IN]->(location:Country {name: 'United States'}) RETURN company.name LIMIT 5",False,False,False
+What are the names of the workers who speak Spanish and work in the industry of Hospitals and Health Care? get top 5 results,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN distinct p.name LIMIT 5",False,False,True
+What are the names of the companies that are in the industry of Software Development and have workers with a Bachelor degree? get top 5 results,Complex Retrieval Queries,"MATCH(c:Company)-[:IS_IN]->(:Industry{name: 'Software Development'}),  (p:Person {degree: 'Bachelor'})-[:WORKS_IN]->(c) RETURN c.name LIMIT 5",False,False,True
+What are the names of the workers who speak French and work in the industry of Real Estate? get top 5 results,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate'}) RETURN p LIMIT 5,False,False,False
+What are the names of the workers who speak German and work in the industry of IT Services and IT Consulting? get top 5 results,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}) WITH p MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) RETURN p.name LIMIT 5,False,False,True
+What are the names of the companies that are in the industry of Financial Services and have workers with a Master degree? get top 5 results,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Financial Services'})MATCH (c)<-[:WORKS_IN]-(p:Person {degree: 'Master'}) RETURN DISTINCT c.name Order by c.name LIMIT 5,False,False,True
+Which workers speak Spanish and live in the United States? get first 3 results,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}) WHERE exists{ (p)-[:LIVES_IN]->(:Country {name: 'United States'})} RETURN p LIMIT 3,False,False,True
+What are the names of the companies that are in the industry of Hospitals and Health Care and are located in Canada? get top 5 results,Complex Retrieval Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}), (c)-[:IS_located_IN]->(:Country {name: 'Canada'}) RETURN c LIMIT 5",False,False,False
+What are the names of the workers who speak English and work in the industry of Advertising Services? get top 5 results,Complex Retrieval Queries,MATCH (l:Language {name: 'English'})-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'})  RETURN p.name LIMIT 5,False,False,True
+What are the names of the companies that are in the industry of Higher Education and have workers with a Bachelor degree? get top 5 results,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'})<-[:WORKS_IN]-(p:Person {degree: 'Bachelor'}) RETURN c.name LIMIT 5,False,False,False
+What are the names of the workers who speak French and work in the industry of IT Services and IT Consulting? get top 5 results,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'French'}) WITH p MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) RETURN p.name LIMIT 5,False,False,True
+What are the names of the companies that are in the industry of Software Development and are located in the United States? get top 5 results,Complex Retrieval Queries,MATCH (i:Industry {name: 'Software Development'})<-[:IS_IN]-(c:Company)<-[:LIVES_IN]-(co:Country {name: 'United States'}) RETURN c.name LIMIT 5,False,False,False
+What are the names of the workers who speak German and work in the industry of Hospitals and Health Care? get top 5 results,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}) WITH p MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN p.name LIMIT 5,False,False,False
+What are the names of the companies that are in the industry of Real Estate and have workers with a Master degree? get top 5 results,Complex Retrieval Queries,"MATCH (p:Person)-[r1:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name : 'Real Estate'}) WHERE p.degree = 'Master' RETURN DISTINCT p.name, c.name ORDER BY p.name LIMIT 5",False,False,True
+What are the names of the workers who speak Spanish and work in the industry of Financial Services? get top 5 results,Complex Retrieval Queries,"MATCH (worker:Person)-[:SPEAKS]->(:Language {name: 'Spanish'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN worker.name LIMIT 5
+",False,False,False
+What are the names of the companies that are in the industry of Advertising Services and have workers with a Bachelor degree? get top 5 results,Complex Retrieval Queries,MATCH (p:Person {degree: 'Bachelor'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) RETURN DISTINCT c.name LIMIT 5,False,False,True
+What countries do people who speak English live in? Limit to 5 results,Simple Aggregation Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN DISTINCT c.name LIMIT 5,False,False,True
+What countries do people who speak German live in? Limit to 5 results,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}), (p)-[:LIVES_IN]->(c:Country) RETURN DISTINCT c.name LIMIT 5",False,False,True
+What countries do people who speak Spanish live in? Limit to 5 results,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (p)-[:LIVES_IN]->(c:Country) RETURN DISTINCT c.name LIMIT 5",False,False,True
+What companies do workers named John work in? Limit to 5 results,Simple Aggregation Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company) RETURN c.name LIMIT 5,False,False,False
+What companies do workers named Emily work in? Limit to 5 results,Simple Aggregation Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company) RETURN c.name LIMIT 5,False,False,False
+What industries are companies named 'Toolbox Creative' in? Limit to 5 results,Simple Aggregation Queries,MATCH (:Company {name: 'Toolbox Creative'})-[:IS_IN]->(industry:Industry) RETURN industry.name LIMIT 5,False,False,True
+What countries do workers named Alice live in? Limit to 5 results,Simple Aggregation Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person {name: 'Alice'}) RETURN c LIMIT 5,False,False,False
+What countries do workers named Paul live in? Limit to 5 results,Simple Aggregation Queries,"MATCH (p:Person {name: 'Paul Lukes'})-[:LIVES_IN]->(c:Country)
+RETURN c.name
+LIMIT 5",False,False,True
+What are the names of the companies where people who speak English work? Limit to 5 results,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'})-[:WORKS_IN]->(c:Company) RETURN DISTINCT(c.name) LIMIT 5,False,False,False
+What are the names of the companies where people who speak Spanish work? Limit to 5 results,Simple Aggregation Queries,MATCH (l:Language {name: 'Spanish'})<-[rel1:SPEAKS]-(p:Person)-[rel2:WORKS_IN]->(company:Company) RETURN company.name LIMIT 5,False,False,True
+What are the names of the companies where people who speak German work? Limit to 5 results,Simple Aggregation Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'German'}) RETURN c.name LIMIT 5,False,False,True
+What are the industries of the companies where people who speak English work? Limit to 5 results,Simple Aggregation Queries,"MATCH (l:Language {name: 'English'})<-[speaks_relation]-(p:Person)-[works_in_relation:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry)
+RETURN i.name
+ORDER BY i.name
+LIMIT 5",False,False,True
+What are the industries of the companies where people who speak Spanish work? Limit to 5 results,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(ind:Industry) WHERE exists{(c)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'})} RETURN ind limit 5,False,False,True
+What are the industries of the companies where people who speak German work? Limit to 5 results,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}), (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name LIMIT 5",False,False,True
+How many people who speak English are in each country? Limit to 5 results,Simple Aggregation Queries,"MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c.name, COUNT(DISTINCT p) as num ORDER BY num DESC LIMIT 5",False,False,True
+How many people who speak Spanish are in each country? Limit to 5 results,Simple Aggregation Queries,"MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}) RETURN c.name, COUNT(DISTINCT p) AS count ORDER BY count DESC LIMIT 5",False,False,True
+How many people who speak German are in each country? Limit to 5 results,Simple Aggregation Queries,"MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'German'}) RETURN c.name, COUNT(DISTINCT p) AS count ORDER BY count DESC LIMIT 5",False,False,True
+What is the minimum age of workers in each company? Limit to 5 results,Simple Aggregation Queries,"MATCH (n:Person)-[:WORKS_IN]->(c:Company) RETURN c.name as company, min(n.age) as min_age ORDER BY min_age ASC LIMIT 5",False,False,True
+What is the maximum age of workers in each company? Limit to 5 results,Simple Aggregation Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company) RETURN c.name, MAX(p.age) AS MaxAge ORDER BY MaxAge DESC LIMIT 5",False,False,True
+What is the average age of workers in each company? Limit to 5 results,Simple Aggregation Queries,"MATCH (c:Company)<-[:WORKS_IN]-(p:Person) RETURN c.name AS Company, avg(toInteger(p.age)) AS Average_age ORDER BY Average_age LIMIT 5",False,False,True
+What language does the person named 'Paul Lukes' speakoling'?',Pathfinding Queries,"MATCH (n:Person {name: 'Paul Lukes'}) OPTIONAL MATCH (n)-[:SPEAKS]->(r:Language) RETURN 'Language' as Rahmen , collect(distinct r.name) as data",False,False,True
+What is the name of the person who works in 'California College of the Arts' and lives in 'United States'?',Pathfinding Queries,"MATCH (p:Person)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'}), (p)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN p.name",False,False,True
+What languages do people who work in the company 'Toolbox Creative' speak?',Pathfinding Queries,MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(:Company {name: 'Toolbox Creative'}) RETURN DISTINCT l.name,False,False,True
+What are the names of people who speak 'English' and live in 'United States'?',Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}), (p)-[:LIVES_IN]->(c:Country {name: 'United States'}) RETURN p.name",False,False,True
+What are the names of people who work in 'Hospital and Health Care' industry?',Pathfinding Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN p.name AS names,False,False,True
+What companies are located in 'IT Services and IT Consulting' industry?',Pathfinding Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'IT Services and IT Consulting' RETURN c,False,False,True
+What schools do people who work in 'Higher Education' industry attend?',Pathfinding Queries,MATCH (s:School)<-[:EDUCATED_AT]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}) RETURN DISTINCT s,False,False,True
+What countries do people who work in 'Higher Education' industry live in?',Pathfinding Queries,MATCH (p:Person)-[:LIVES_IN]->(country:Country) WHERE exists { (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'})} RETURN DISTINCT country.name,False,False,True
+What are the names of people who speak 'French' and work in 'Hospital and Health Care' industry?',Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'French'}) MATCH (p)-[:WORKS_IN]->(com:Company)-[:IS_IN]->(ind:Industry {name: 'Hospitals and Health Care'}) RETURN DISTINCT p.name,False,False,False
+What are the names of people who work in 'Toolbox Creative' and speak 'English'?',Pathfinding Queries,"MATCH (c:Company {name: 'Toolbox Creative'}) OPTIONAL MATCH (c)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) RETURN c.name,p.name,l.name",False,False,True
+What industries do people who speak 'English' and live in 'United States' work in?',Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:LIVES_IN]->(:Country {name: 'United States'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry) RETURN i",False,False,True
+What companies are located in 'Technology' industry?',Pathfinding Queries,MATCH (p:Company)-[:IS_IN]->(industry:Industry {name: 'Technology'}) RETURN p,False,False,False
+What are the names of people who work in 'Real Estate' industry?',Pathfinding Queries,MATCH (n:Person)-[:WORKS_IN]->(m:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Real Estate' RETURN collect(distinct n.name) as names,False,False,True
+What languages do people who work in 'Advertising Services' industry speak?',Pathfinding Queries,MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) RETURN DISTINCT l.name,False,False,True
+What are the names of people who speak 'German' and live in 'United States'?',Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}),(p)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN p.name",False,False,False
+What schools do people who work in 'Financial Services' industry attend?',Pathfinding Queries,MATCH (s:School)<-[:EDUCATED_AT]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN DISTINCT s,False,False,True
+What countries do people who work in 'Financial Services' industry live in?',Pathfinding Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN c.name,False,False,True
+What are the names of people who work in 'Toolbox Creative' and speak 'English'?',Pathfinding Queries,"MATCH (c:Company {name: 'Toolbox Creative'}) OPTIONAL MATCH (c)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) RETURN c.name,p.name,l.name",False,False,True
+What languages do people who work in 'financial' industry speak?,Pathfinding Queries,MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN l,False,False,True
+"Find the ""Person"" who live in United States and attended a ""School"" located in United States",Complex Aggregation Queries,"MATCH (n:Person)-[:LIVES_IN]->(c:Country {name:'United States'}), (n:Person)-[:EDUCATED_AT]->(m:School)-[:LOCATED_IN]->(d:Country {name:'United States'}) RETURN n, c, m, d",False,False,False
+"Which workers, with at least a Bachelor's degree, educated at a school that speaks English, currently work within the Advertising Services industry",Complex Aggregation Queries,"MATCH (p:Person)-[:EDUCATED_AT]->(school:School)-[:SPEAKS]->(l:Language {name: 'English'}) MATCH (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) WHERE p.degree IN ['Bachelor', 'Master'] RETURN p",False,False,False
+"Find the total count of workers doing chunks from 2017, that currently work within the Financial Services industry",Complex Aggregation Queries,MATCH (c:Person)-[:WORKS_IN]->(d:Company)-[:IS_IN]->(e:Industry {name: 'Financial Services'}) WHERE c.joining_year='2017' RETURN COUNT(c) AS workerCount,False,False,True
+"Find workers within the age range of 25 to 27, sub-filtered to bachelor's degree holders working within the Software Development industry",Complex Aggregation Queries,"MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) WHERE p.age IN ['25', '26', '27'] AND p.degree = 'Bachelor' RETURN p",False,False,True
+Which industry is Toolbox Creative in?,Verbose query,MATCH (p:Company {name: 'Toolbox Creative'})-[r:IS_IN]->(m:Industry) RETURN m.name,False,False,True
+What industry is the company 'Oracle' in?,Verbose query,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE c.name = 'Oracle' RETURN i.name,False,False,True
+What is the name of the company that Nick Ramos works in?,Verbose query,MATCH (p:Person {name: 'Nick Ramos'})-[:WORKS_IN]->(c:Company) RETURN c.name AS name,False,False,True
+Which person with the name 'Paul Lukes' works in 'Hospitals and Health Care' industry?,Verbose query,"MATCH (n:Person {name: 'Paul Lukes'})-[r:WORKS_IN]->(m:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN n,r,m",False,False,False
+What is the name of the school that Nick Ramos was educated at?,Verbose query,MATCH (p:Person {name: 'Nick Ramos'})-[:EDUCATED_AT]->(s:School) RETURN s.name,False,False,True
+Who works at the company 'Toolbox Creative'?,Verbose query,MATCH p = (n:Person)-[r:WORKS_IN]->(c:Company {name: 'Toolbox Creative'}) RETURN p,False,False,True
+What is the name of the country where the person with the name 'Paul Lukes' lives?,Verbose query,MATCH (p:Person)-[:LIVES_IN]->(c:Country) WHERE p.name = 'Paul Lukes' RETURN c.name,False,False,True
+What is the name of the company that the person with the name 'Nick Ramos' works in?,Verbose query,MATCH (c:Company)<-[:WORKS_IN]-(p:Person {name: 'Nick Ramos'}) RETURN c.name,False,False,True
+Which workers speak French?,Verbose query,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) RETURN p,False,False,True
+What companies are located in the technology industry?,Verbose query,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name CONTAINS 'technology' RETURN c,False,False,False
+Where do workers named Alice live?,Verbose query,MATCH (p:Person {name: 'Alice'})-[:LIVES_IN]->(c:Country) RETURN c,False,False,False
+What companies do workers named John work in?,Verbose query,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+How many workers in Hospital and Health Care industries are named John?,Verbose query,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) RETURN count(p),False,False,True
+In which countries do workers who speak Spanish live?,Verbose query,MATCH (l:Language {name: 'Spanish'})<-[rel:SPEAKS]-(p:Person)-[rel2:LIVES_IN]->(c:Country) RETURN c,False,False,True
+Which workers live in Canada and speak German?,Verbose query,MATCH (p:Person)-[:LIVES_IN]->(c:Country {name: 'Canada'}) WHERE exists{ (p)-[:SPEAKS]->(:Language {name: 'German'})} RETURN p,False,False,False
+What industries are workers named Emily associated with?,Verbose query,MATCH (n:Person {name: 'Emily'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name AS name,False,False,False
+What is the joining year of the person with the name 'Lindsey Boland'?,Verbose query,MATCH (n:Person {name: 'Lindsey Boland'}) RETURN n.joining_year,False,False,True
+What is the degree of the person with the name 'Lindsey Boland'?,Verbose query,MATCH (n:Person {name: 'Lindsey Boland'}) RETURN n.degree AS result,False,False,True
+What is the age of the person with the name 'Lindsey Boland'?,Verbose query,MATCH (p:Person {name: 'Lindsey Boland'}) RETURN p.age AS Age,False,False,True
+Which person has the highest age in the entire dataset (limit answer to the first result)?,Simple Retrieval Queries,MATCH (n:Person) RETURN n ORDER BY n.age DESC LIMIT 1,False,False,True
+What is the top company that workers with Master degree work in?,Simple Retrieval Queries,"MATCH (c:Company)<-[:WORKS_IN]-(p:Person {degree: 'Master'}) RETURN c.name AS companyName, COUNT(p) AS numberOfWorkers ORDER BY numberOfWorkers DESC LIMIT 1",False,False,True
+What are the top five companies in the Hospitality industry?,Simple Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN c.name LIMIT 5,False,False,True
+What are the names of all companies with workers who live in Canada?,Simple Retrieval Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(:Country {name: 'Canada'}) RETURN c.name,False,False,True
+What is the name of the industry where companies have more workers between the ages of 25 and 35?,Simple Retrieval Queries,"MATCH (i:Industry)<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person)
+WHERE toInteger(p.age) >= 25 AND toInteger(p.age) <= 35
+RETURN i.name AS industry_name, COUNT(DISTINCT p) AS worker_count
+ORDER BY worker_count DESC
+LIMIT 1
+",False,False,False
+What is the average age of workers at companies in the Financial industry?,Simple Retrieval Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'})
+        MATCH (p:Person)-[:WORKS_IN]->(c)
+        RETURN avg(toInteger(p.age)) AS avg_age",False,False,True
+What are the names of the countries where workers in the Advertising industry live?,Simple Retrieval Queries,"MATCH (p:Person)-[:LIVES_IN]->(country:Country), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) RETURN DISTINCT country.name",False,False,True
+What are the names of the countries where workers who have studied at the California College of the Arts live?,Simple Retrieval Queries,"MATCH (c:School {name: 'California College of the Arts'}) <-[:EDUCATED_AT]- (p:Person)-[:LIVES_IN]-> (co:Country)
+RETURN co.name",False,False,True
+What is the total number of workers in the Advertising industry who have graduated from Centennial College?,Simple Retrieval Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}), (p:Person)-[:EDUCATED_AT]->(:School {name: 'Centennial College'}) WHERE exists{ (p)-[:WORKS_IN]->(c) } RETURN COUNT(DISTINCT p) AS count",False,False,True
+What are the names of companies that have workers who speak German as their primary language?,Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}) WITH p MATCH (p:Person)-[:WORKS_IN]->(c:Company) RETURN DISTINCT c.name,False,False,True
+What is the most popular language spoken by workers who work at companies in the Technology industry ?,Simple Retrieval Queries,"MATCH (l:Language)<-[:SPEAKS]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN l.name, COUNT(DISTINCT p) AS counted ORDER BY counted DESC LIMIT 1",False,False,True
+What is the number of workers in the Software Development industry who have Bacholatia degree and are 32 years old?,Simple Retrieval Queries,"MATCH (p:Person {degree: 'Bachelor', age: '32'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN count(p) AS num_workers",False,False,True
+What are the top two companies that have workers who have graduated from Harvard University?,Simple Retrieval Queries,"MATCH (s:School {name: 'Harvard University'})-[:EDUCATED_AT|WORKS_IN*2]-(c:Company)
+ RETURN c.name AS top_company, COUNT(DISTINCT s) AS amount
+ ORDER BY COUNT(DISTINCT s) DESC LIMIT 2",False,False,False
+What are the names of industries where workers from Canada live?,Simple Retrieval Queries,"MATCH (c:Country {name: 'Canada'})<-[livesin:LIVES_IN]-(p:Person)-[wi:WORKS_IN]->(:Company)-[inind:IS_IN]->(i:Industry)
+RETURN DISTINCT collect(i.name) as Industynames",False,False,True
+What is the name of the language that workers in the Financial Services industry speak with highest frequency?,Simple Retrieval Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}), (c)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(l:Language) RETURN l.name, COUNT( DISTINCT p) as num ORDER BY num DESC LIMIT 1",False,False,True
+What are the names of the companies in the Software Development industry that have the highest average age of workers?,Simple Retrieval Queries,"MATCH (c:Company)-[:IS_IN]->(i:Industry)
+WHERE i.name = 'Software Development'
+MATCH (c)<-[:WORKS_IN]-(p:Person)
+RETURN c.name AS company_name, AVG(toInteger(p.age)) AS avg_age
+ORDER BY avg_age DESC
+LIMIT 1
+",False,False,False
+What is the country where workers who live in Australia work in Advertising Services?,Simple Retrieval Queries,"MATCH (w:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(industry:Industry {name:'Advertising Services'}), (w)-[:LIVES_IN]->(country:Country {name: 'Australia'}) RETURN count(w) AS countlivegreтоperindusory",False,False,True
+What workers speak English and work in the Financial Services industry?,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN p,False,False,False
+What workers in the Advertising Services industry speak English and are over 30 years old?,Complex Retrieval Queries,"MATCH (w:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry), (w)-[:SPEAKS]->(l:Language) WHERE i.name = 'Advertising Services' AND w.age > '30' AND l.name = 'English' RETURN w.name",False,False,True
+In what countries do workers who speak English and work in the Software Development industry live?,Complex Retrieval Queries,"MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN DISTINCT c.name",False,False,True
+What are the names of workers who live in the United States and work in the IT Services and IT Consulting industry?,Complex Retrieval Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry)
+WHERE c.name = 'United States' AND i.name = 'IT Services and IT Consulting'
+RETURN p.name",False,False,False
+"What workers speak English, live in Canada, and work in the Higher Education industry?",Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) MATCH (p)-[:LIVES_IN]->(c:Country {name: 'Canada'}) MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}) RETURN p,False,False,True
+How many workers who speak English work in the Hospitals and Health Care industry?,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) RETURN count(p) as number",False,False,True
+What are the names of companies in the Real Estate industry that have workers who speak English?,Complex Retrieval Queries,MATCH (l:Language {name: 'English'})<-[sp:SPEAKS]-(p:Person)-[:WORKS_IN]->(c:Company)-[cp:IS_IN]->(i:Industry {name: 'Real Estate'}) RETURN c.name AS c_name,False,False,True
+What workers who speak English live in the United Kingdom and work in the Financial Services industry?,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:LIVES_IN]->(:Country {name: 'United Kingdom'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN p",False,False,True
+What workers who speak English and work in the Advertising Services industry are over 30 years old?,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'})} AND p.age > '30' RETURN p.name,False,False,True
+What workers speak English and work in the IT Services and IT Consulting industry?,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'IT Services and IT Consulting'}) RETURN p,False,False,False
+Which workers have a Master's degree?,Simple Aggregation Queries,"
+MATCH (p:Person {degree: ""Master""}) RETURN p ",False,False,True
+What are the first 3 countries where workers who speak Spanish live?,Simple Aggregation Queries,MATCH (l:Language {name: 'Spanish'})<-[rel:SPEAKS]-(p:Person)-[rel2:LIVES_IN]->(c:Country) RETURN c LIMIT 3,False,False,True
+What are the names of the companies where workers named John work?,Simple Aggregation Queries,"MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company)
+RETURN c.name",False,False,False
+How many workers in the Hospital and Health Care industry are there?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN count(DISTINCT p) AS num_workers,False,False,True
+What are the names of the schools that workers named Emily attended?,Simple Aggregation Queries,MATCH (p:Person {name: 'Emily'})-[:EDUCATED_AT]->(s:School) RETURN s.name,False,False,False
+What are the names of the workers who speak French and live in Canada?,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}), (p)-[:LIVES_IN]->(c:Country {name: 'Canada'}) RETURN p.name",False,False,True
+What are the names of the companies that are located in the Advertising Services industry?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) RETURN c.name,False,False,True
+What are the names of the workers who have a Bachelor's degree and work in the Software Development industry?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) WHERE p.degree = 'Bachelor' AND i.name = 'Software Development' RETURN p.name,False,False,True
+What are the top 3 industries where workers named Alice work?,Simple Aggregation Queries,"MATCH (p:Person {name: 'Alice'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry)
+RETURN i.name, count(i)
+ORDER BY count(i) DESC
+LIMIT 3
+",False,False,False
+How many workers in the Financial Services industry are there?,Simple Aggregation Queries,MATCH (w:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Financial Services' RETURN COUNT(DISTINCT w),False,False,True
+What are the names of the companies where workers named Nick work?,Simple Aggregation Queries,MATCH (p:Person {name: 'Nick'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,False
+What are the names of the countries where workers who speak German live?,Simple Aggregation Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'German'}) RETURN c.name,False,False,True
+What are the names of the workers who live in the United States and work in the IT Services and IT Consulting industry?,Simple Aggregation Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry)
+WHERE c.name = 'United States' AND i.name = 'IT Services and IT Consulting'
+RETURN p.name",False,False,False
+What are the names of the schools that workers named Paul attended?,Simple Aggregation Queries,MATCH (s:School)<-[:EDUCATED_AT]-(p:Person {name: 'Paul'}) RETURN DISTINCT s.name,False,False,False
+What are the first 5 industries where workers who speak English work?,Simple Aggregation Queries,"MATCH (worker:Person)-[:SPEAKS]->(:Language {name: 'English'}), (worker)-[:WORKS_IN]->(:Company)-[:IS_IN]->(industry:Industry) RETURN DISTINCT industry LIMIT 5",False,False,True
+What are the names of the workers who speak Spanish and work in the Real Estate industry?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}) RETURN p.name,False,False,False
+What are the names of the companies that are located in the Higher Education industry?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Higher Education' RETURN c.name,False,False,True
+What are the top 3 countries where workers who speak French live?,Simple Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'French'}), (p)-[:LIVES_IN]->(c:Country) RETURN c.name AS Country, count(p) AS Count ORDER BY Count DESC LIMIT 3",False,False,True
+What workers speak English and work at Search Engine People with age below 30,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:WORKS_IN]->(:Company {name: 'Search Engine People'}) WHERE p.age < '30' RETURN p",False,False,False
+First 3 workers who joined in 2017,Pathfinding Queries,MATCH (p:Person {joining_year: '2017'}) RETURN p LIMIT 3,False,False,True
+What workers work in IT Services and IT Consulting industry,Pathfinding Queries,MATCH (i:Industry {name: 'IT Services and IT Consulting'})<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person) RETURN p,False,False,True
+What industry does Paul Lukes work in,Pathfinding Queries,MATCH (p:Person {name: 'Paul Lukes'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i.name,False,False,True
+Which countries do workers who speak English live in,Pathfinding Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c,False,False,True
+What workers are educated at Centennial College and work at Search Engine People,Pathfinding Queries,MATCH (p:Person)-[:EDUCATED_AT]->(:School {name: 'Centennial College'}) WHERE exists{(p)-[:WORKS_IN]->(:Company {name: 'Search Engine People'})} RETURN p,False,False,True
+Who lives in the United States with a Master degree,Pathfinding Queries,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) WHERE p.degree = 'Master' RETURN p,False,False,True
+First 5 industries that are associated with the companies in the Real Estate industry,Pathfinding Queries,MATCH (:Company {industry: 'Real Estate'})<-[:EDUCATED_AT]-(a:Industry) RETURN a LIMIT 5,False,False,False
+What workers who live in Canada speak Spanish,Pathfinding Queries,"MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'Canada'}), (p)-[:SPEAKS]->(:Language {name: 'Spanish'}) RETURN p",False,False,True
+What workers are educated at the University of South Florida and work at Toolbox Creative,Pathfinding Queries,"MATCH (c:Company {name: 'Toolbox Creative'})-[r:WORKS_IN]-(p:Person) WITH c, r, p MATCH (s:School {name: 'University of South Florida'})-[r2:EDUCATED_AT]-(p2:Person) WHERE p2=p RETURN c, r, p",False,False,False
+What workers are under 30 and live in the United States and speak English,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}), (p)-[:LIVES_IN]->(c:Country {name: 'United States'}) WHERE p.age < '30' RETURN DISTINCT p",False,False,True
+What workers speak English and work in the Software Development industry,Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'})}  RETURN p,False,False,True
+Who works in the Advertising Services industry and lives in the United States,Pathfinding Queries,MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) MATCH (p)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN p,False,False,True
+How many workers in the Hospitals and Health Care industry live in the United States and work at Search Engine People,Pathfinding Queries,MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company {name: 'Search Engine People'})-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN COUNT(DISTINCT p) AS workersCount,False,False,True
+Top 3 languages spoken by workers who live in the United States and work in the IT Services and IT Consulting industry,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language)
+WHERE (p)-[:LIVES_IN]->(:Country {name: 'United States'})
+AND (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'})
+RETURN l.name, COUNT(DISTINCT p)
+ORDER BY COUNT(DISTINCT p) DESC
+LIMIT 3",False,False,True
+Which industries are workers named Emily associated with,Pathfinding Queries,MATCH (n:Person {name: 'Emily'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name AS answer,False,False,False
+What workers are workers associated with in the Real Estate industry,Pathfinding Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate'}), (p2:Person)-[:WORKS_IN]->(c) RETURN p2.name as answer",False,False,False
+What workers live in Canada with a Bachelor degree and joined in 2017,Pathfinding Queries,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'Canada'}) WHERE p.degree = 'Bachelor' AND p.joining_year = '2017' RETURN p,False,False,False
+What workers in the IT Services and IT Consulting industry speak English and live in Canada,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'English'}), (p)-[:WORKS_IN]->(com:Company)-[:IS_IN]->(ind:Industry {name: 'IT Services and IT Consulting'}), (p)-[:LIVES_IN]->(cou:Country {name: 'Canada'}) RETURN p",False,False,False
+First 3 workers in the Higher Education industry who are educated at the University of South Florida and joined in 2017,Pathfinding Queries,"
+            MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}), (p)-[:EDUCATED_AT]->(:School {name: 'University of South Florida'}) WHERE p.joining_year = '2017' RETURN p LIMIT 3",False,False,False
+What company does Emily work in?,Complex Aggregation Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+Who are the first 5 people associated with Toolbox Creative located in the United States?,Verbose query,MATCH (p:Person)-[:WORKS_IN]->(:Company {name: 'Toolbox Creative'})-[:IS_IN]->(:Industry) WHERE exists{ (p)-[:LIVES_IN]->(:Country {name: 'United States'})} RETURN p.name LIMIT 5,False,False,True
+"Which companies, with a maximum of 10 results, do Lindsey Boland work in?",Verbose query,MATCH (p:Person {name: 'Lindsey Boland'})-[:WORKS_IN]->(c:Company) RETURN c LIMIT 10,False,False,True
+"List the top 5 Educational Institutions that Lindsey Boland studied in, sorted alphabetically.",Verbose query,MATCH (p:Person {name: 'Lindsey Boland'})-[:EDUCATED_AT]->(s:School) RETURN DISTINCT s.name ORDER BY s.name LIMIT 5,False,False,True
+What are the names of the first 3 languages spoken by Lindsey Boland?,Verbose query,"MATCH (p:Person {name: 'Lindsey Boland'})-[:SPEAKS]->(l:Language)
+RETURN l.name
+LIMIT 3",False,False,True
+"Identify 3 individuals working in the Advertising Services industry that speak English, German, and French. In addition, provide their joining years and ages. Limit your search to the first 3 results.",Verbose query,"MATCH (p:Person)-[:SPEAKS]->(lan:Language), (p)-[:WORKS_IN]->(com:Company)-[:IS_IN]->(indus:Industry {name: 'Advertising Services'}) WHERE lan.name IN  ['English', 'German', 'French'] RETURN DISTINCT p.name, p.joining_year, p.age LIMIT 3",False,False,True
+"In what industries, up to a maximum of 3 results, do workers named Alice associated with?",Verbose query,MATCH (i:Industry)<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person {name: 'Alice'}) RETURN DISTINCT i.name LIMIT 3,False,False,False
+Which Person speaks language English,Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) RETURN p,False,False,True
+What companies is the Company Search Engine People related to,Simple Retrieval Queries,MATCH (a:Company {name: 'Company Search Engine People'})-[:IS_RELATED_TO]->(b:Company) RETURN b.name AS result,False,False,False
+Where does Haris Nadeem lives,Simple Retrieval Queries,MATCH (n:Person {name: 'Haris Nadeem'})-[:LIVES_IN]->(c:Country) RETURN c.name,False,False,True
+What is the age of Paul Lukes who has Master degree and joined in 2017,Simple Retrieval Queries,"MATCH (n:Person {name: 'Paul Lukes', degree: 'Master', joining_year: '2017'}) RETURN n.age",False,False,True
+Who iseducated at Centennial College,Simple Retrieval Queries,"MATCH (person:Person)-[:EDUCATED_AT]->(s:School {name: ""Centennial College""}) RETURN person",False,False,True
+How many persons are working in Advertising Services industry and are aged 25,Simple Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) WHERE p.age = '25' RETURN count(p) AS count,False,False,True
+What is the degree of Lindsey Boland who works in Search Engine People,Simple Retrieval Queries,MATCH (n:Person {name: 'Lindsey Boland'})-[:WORKS_IN]->(:Company {name: 'Search Engine People'}) RETURN n.degree AS result,False,False,True
+What workers who works at Company Search Engine People are over 30,Simple Retrieval Queries,MATCH (n:Person)-[:WORKS_IN]->(:Company{name: 'Search Engine People'}) WHERE n.age > 30 RETURN n.name,False,False,False
+In which school did Lindsey Boland educated at before joining Company Search Engine People in 2016,Simple Retrieval Queries,"MATCH (p:Person {name: 'Lindsey Boland'})-[e:EDUCATED_AT]->(s:School), (p)-[:WORKS_IN]->(:Company {name: 'Search Engine People'}) WHERE p.joining_year = '2016' RETURN s",False,False,True
+Which companies are in Advertising Services industry and employs workers named Lindsey Boland,Simple Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'})<-[:WORKS_IN]-(p:Person {name: 'Lindsey Boland'}) RETURN c,False,False,False
+How many person who lives in United States speaks language English,Simple Retrieval Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country), (p)-[:SPEAKS]->(lan:Language) WHERE c.name = 'United States' AND lan.name = 'English' RETURN COUNT(p) AS WHAT_COUNT",False,False,True
+Which companies does Emily named worker work in,Simple Retrieval Queries,MATCH (n:Person {name: 'Emily'})-[:WORKS_IN]->(m:Company) RETURN m,False,False,False
+What is the name of the Industry in which Company Search Engine People operates,Simple Retrieval Queries,MATCH (company:Company {name: 'Search Engine People'})-[relationship:IS_IN]->(industry:Industry) RETURN industry.name,False,False,True
+What industry does the Company Search Engine People operate in,Simple Retrieval Queries,"
+		MATCH (c:Company {name: 'Search Engine People'})-[:IS_IN]->(industry:Industry) RETURN industry",False,False,True
+Which workers is working in Company Search Engine People and has more than 5 years of work ex,Simple Retrieval Queries,MATCH p = (n:Person)-[r:WORKS_IN]->(c:Company {name: 'Search Engine People'}) WHERE r.to IS NOT NULL RETURN p LIMIT 5,False,False,False
+How many Person lives in country United States,Simple Retrieval Queries,"MATCH (p:Person)-[r:LIVES_IN]->(c:Country {name: ""United States""}) RETURN COUNT(p) AS amount_of_people",False,False,True
+How many worker in Company Search Engine People is having Master degree,Simple Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company {name: 'Search Engine People'}) WHERE p.degree = 'Master' RETURN COUNT(p) AS total_worker,False,False,True
+What are the schools that worker Lindsey Boland studied in and is now working in Company Search Engine People,Simple Retrieval Queries,MATCH (p:Person {name: 'Lindsey Boland'})-[:EDUCATED_AT]->(school:School) WHERE exists((p)-[:WORKS_IN]->(:Company {name: 'Search Engine People'})) RETURN school,False,False,True
+Which nation do person Paul Lukes resides in and works at Company Toolbox Creative,Simple Retrieval Queries,"MATCH (p:Person {name: 'Paul Lukes'})-[:WORKS_IN]->(:Company {name: 'Toolbox Creative'}), (p)-[:LIVES_IN]->(c:Country) RETURN c.name AS Country",False,False,True
+Which company is aged 28 and named Paul Lukes working at,Simple Retrieval Queries,"MATCH (n:Person {name: 'Paul Lukes', age: '28'})-[:WORKS_IN]->(m:Company) RETURN m",False,False,True
+Which workers have a Bachelor's degree and joined in 2016,Complex Retrieval Queries,"MATCH (p:Person {degree: 'Bachelor', joining_year: '2016'}) RETURN p",False,False,True
+Who is named Emily and works in an industry associated with this name,Complex Retrieval Queries,MATCH (i:Industry)<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person {name: 'Emily'}) RETURN i,False,False,False
+Which workers speak English and work in Industry named 'Advertising Services'? ,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'English'}) MATCH (p)-[:WORKS_IN]->(com:Company)-[:IS_IN]->(ind:Industry {name: 'Advertising Services'}) RETURN p,False,False,True
+Which workers speak Spanish and live in the United States,Complex Retrieval Queries,"
+      MATCH (p:Person) - [r2:SPEAKS] -> (l:Language), (p) - [r1:LIVES_IN] -> (c:Country) WHERE l.name = 'Spanish' AND c.name = 'United States' RETURN p.name, c.name, l.name",False,False,True
+Which workers speak English and work in Industry named 'IT Services and IT Consulting'? ,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'})} RETURN p,False,False,True
+What companies are workers from 'Higher Education' associated with,Complex Retrieval Queries,"
+      MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}), (p:Person)-[:WORKS_IN]->(c)
+      RETURN DISTINCT c.name AS company_name  ORDER BY company_name",False,False,True
+What companies are workers from 'Hospitals and Health Care' associated with,Complex Retrieval Queries,MATCH p=(:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN p,False,False,True
+What companies are workers from 'Real Estate' associated with,Complex Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate'}) RETURN c,False,False,True
+What companies are workers from 'Software Development' associated with,Complex Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Software Development'}) RETURN c,False,False,True
+What companies are workers from 'Real Estate' associated with,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate'}) RETURN c.name,False,False,True
+What are the names of workers with Master's degrees who joined in 2017,Complex Retrieval Queries,"
+MATCH (p:Person) where p.joining_year = '2017' AND p.degree = 'Master' RETURN p.name",False,False,True
+What are the names of workers who speak English and work in the IT industry,Complex Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) MATCH (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'IT Services and IT Consulting'}) RETURN p.name,False,False,True
+What companies do workers who live in Canada and speak German work for,Complex Retrieval Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company)
+WHERE exists { (p)-[:LIVES_IN]->(:Country {name: 'Canada'})} AND exists { (p)-[:SPEAKS]->(:Language {name: 'German'}) }
+RETURN c",False,False,False
+How many workers in real estate were born in 1992,Complex Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate'}) WHERE p.age = '30' RETURN count(p) AS num_workers,False,False,True
+What industries are companies that have workers named David associated with,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(ind:Industry) WHERE exists{ (p:Person {name: 'David'})-[:WORKS_IN]->(c)} RETURN ind,False,False,False
+What companies have workers named David who speak French,Complex Retrieval Queries,MATCH (p:Person { name: 'David' }) -[:WORKS_IN]-> (comp:Company) WHERE exists ((p)-[:SPEAKS]-> (:Language { name: 'French' }))  RETURN comp.name,False,False,False
+What countries have workers who work in software development,Complex Retrieval Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN c,False,False,True
+What are the names of workers who speak French and live in the United States,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'French'}),(p)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN p.name",False,False,False
+What companies have workers who speak French and live in the United States,Complex Retrieval Queries,"MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'French'}), (p)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN distinct c",False,False,False
+What companies do workers named John work in first 5 results?,Simple Aggregation Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company) RETURN c.name LIMIT 5,False,False,False
+In which countries do workers who speak Spanish live top 3 results?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'})-[:LIVES_IN]->(c:Country) RETURN c.name LIMIT 3,False,False,False
+How many workers in Hospital and Health Care industry?,Simple Aggregation Queries,"MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'})
+RETURN count(DISTINCT p.name) AS worker_count
+",False,False,False
+What is the name of the companies where the workers named Emily work?,Simple Aggregation Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,False
+What is the name of the industry that has companies named Search Engine People?,Simple Aggregation Queries,MATCH (i:Industry)<-[:IS_IN]-(c:Company) WHERE c.name = 'Search Engine People' RETURN i.name,False,False,True
+How many workers speak English first 3 results?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) RETURN p LIMIT 3,False,False,True
+What is the joining year of the workers named Paul Lukes?,Simple Aggregation Queries,"MATCH (p:Person)-[:EDUCATED_AT]->(c:School) WHERE p.name=""Paul Lukes"" RETURN DISTINCT p.joining_year as Joining_year",False,False,True
+What is the average age of the workers in the company named Toolbox Creative?,Simple Aggregation Queries,MATCH (c:Company {name: 'Toolbox Creative'})-[:EMPLOYS]->(p:Person) RETURN avg(p.age) AS average_age,False,False,True
+What is the name of the countries that have workers who speak French top 5 results?,Simple Aggregation Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'French'}) RETURN DISTINCT c.name ORDER BY c.name LIMIT 5,False,False,True
+In which industries do the workers named Haris Nadeem work first 3 results?,Simple Aggregation Queries,"MATCH (p:Person {name: 'Haris Nadeem'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry)
+RETURN i.name
+LIMIT 3",False,False,True
+What is the name of the schools that have workers named Lindsey Boland first 3 results?,Simple Aggregation Queries,MATCH (s:School)<-[:EDUCATED_AT]-(p:Person {name: 'Lindsey Boland'}) RETURN s.name LIMIT 3,False,False,True
+What is the name of the workers who work in the company named Toolbox Creative?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company {name: 'Toolbox Creative'}) RETURN p.name,False,False,True
+How many workers in the company named Search Engine People first 5 results?,Simple Aggregation Queries,MATCH (w:Person)-[:WORKS_IN]->(:Company) WHERE (:Company)-[:IS_IN]->(:Industry)-[:WORKS_IN]->(w) RETURN *,False,False,False
+What is the maximum age of the workers who speak Spanish?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'}) RETURN max(p.age) as max_age,False,False,True
+What is the industry that the workers named Paul Lukes are associated with?,Simple Aggregation Queries,MATCH (n:Person {name: 'Paul Lukes'}) - [:WORKS_IN *]-> (m:Company)-[:IS_IN]->(b:Industry)  RETURN b,False,False,True
+In which countries do the workers named Emily live first 3 results?,Simple Aggregation Queries,MATCH (n:Person {name: 'Emily'})-[:LIVES_IN]->(c:Country) RETURN c LIMIT 3,False,False,False
+What is the minimum age of the workers in the industry named Advertising Services?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'})<-[r:WORKS_IN]-(p:Person) WHERE p.age IS NOT NULL RETURN min(p.age) as min_age,False,False,True
+What is the name of the companies that have workers who live in United States first 3 results?,Simple Aggregation Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN c.name LIMIT 3,False,False,True
+How many workers in the school named University of South Florida top 3 results?,Simple Aggregation Queries,MATCH (p:Person)-[:EDUCATED_AT]->(s:School {name: 'University of South Florida'}) RETURN count(p) LIMIT 3,False,False,True
+What is the name of the industries that have companies named Toolbox Creative?,Simple Aggregation Queries,"
+          MATCH (c:Company)-[:IS_IN]->(ind:Industry) WHERE c.name='Toolbox Creative' RETURN DISTINCT ind.name",False,False,True
+What industry is company 'Search Engine People' associated with,Pathfinding Queries,MATCH (c:Company {name: 'Search Engine People'})-[:IS_IN]->(i:Industry) RETURN i,False,False,True
+Which workers speak English fluently,Pathfinding Queries,"MATCH (n:Person)-[:SPEAKS]->(a:Language {name: 'English'}) RETURN n, a",False,False,True
+What companies do workers named 'Paul Lukes' work in,Pathfinding Queries,MATCH (p:Person {name: 'Paul Lukes'})-[:WORKS_IN]->(c:Company) RETURN c.name AS company_name,False,False,True
+Which workers live in Canada and speak German primarily,Pathfinding Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country)-[:SPEAKS]->(l:Language)
+WHERE c.name = 'Canada' AND l.name = 'German'
+RETURN p.name AS name",False,False,False
+What companies are located in 'Higher Education' industry,Pathfinding Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}) return c.name
+
+",False,False,False
+How many workers in 'Hospital and Health Care' industry have degree 'Master',Pathfinding Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) WHERE p.degree = 'Master' RETURN count(p) as count,False,False,True
+What companies do workers who attended 'California College of the Arts' work in,Pathfinding Queries,MATCH (p:Person)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'})-[:WORKS_IN]->(c:Company) RETURN DISTINCT c,False,False,False
+In which countries do workers who speak Spanish live mainly,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}),
+      (p)-[:LIVES_IN]->(c:Country)
+RETURN c.name AS country_name, COUNT(p) AS worker_count
+ORDER BY worker_count DESC
+
+",False,False,False
+Which workers work in companies located in 'United States',Pathfinding Queries,"MATCH (p:Person)-[r1:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry), (p:Person)-[r2:LIVES_IN]->(cc:Country {name: 'United States'}) RETURN p, r1, c",False,False,True
+What companies do workers who attended 'University of South Florida' work in,Pathfinding Queries,"MATCH (p:Person)-[r1:WORKS_IN]->(c:Company), (p:Person)-[r2:EDUCATED_AT]->(s:School {name: 'University of South Florida'} ) RETURN c.name, COUNT(p) ORDER BY COUNT(p) DESC ",False,False,True
+What companies do workers with degree 'Bachelor' work in,Pathfinding Queries,MATCH (p:Person {degree: 'Bachelor'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,True
+What companies do workers named 'Alice' work in,Pathfinding Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person {name: 'Alice'}) RETURN c,False,False,False
+What companies do workers who attended 'California College of the Arts' work in,Pathfinding Queries,MATCH (p:Person)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'})-[:WORKS_IN]->(c:Company) RETURN DISTINCT c,False,False,False
+What industries are workers named 'John' associated with,Pathfinding Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i.name,False,False,False
+What industries are companies located in 'Canada' associated with,Pathfinding Queries,"MATCH (company:Company)-[rel:IS_LOCATED_IN]->(country:Country)<-[:LIVES_IN]-(person:Person)-[:WORKS_IN]->(c)-[:IS_IN ]->(industry:Industry)
+WHERE country.name = 'Canada' 
+RETURN industry.name ",False,False,False
+How many workers in 'Software Development' industry have degree 'Master',Pathfinding Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) MATCH (p:Person)-[:WORKS_IN]->(c) WHERE p.degree='Master' RETURN COUNT(p) AS count,False,False,True
+Which workers live in 'Canada' and speak French fluently,Pathfinding Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country), (p)-[:SPEAKS]->(lan:Language) WHERE c.name = 'Canada' AND lan.name = 'French' RETURN p.name",False,False,True
+What companies do workers named 'Charlie' work in,Pathfinding Queries,MATCH (p:Person {name: 'Charlie'})-[:WORKS_IN]->(c:Company) RETURN c.name,False,False,False
+In which countries do workers who speak English live mainly,Pathfinding Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c.name,False,False,True
+"Find all workers who speak French and their respective age, companies they work in and country where they live",Complex Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'})-[:WORKS_IN]->(c:Company), (p)-[:LIVES_IN]->(country:Country) RETURN p.age,  c.name, country.name",False,False,False
+List the first 5 countries where workers named Michael live,Complex Aggregation Queries,MATCH (p:Person {name: 'Michael'})-[:LIVES_IN]->(c:Country) RETURN c.name LIMIT 5,False,False,False
+Find all workers who speak German and have a Bachelors degree,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'German'}) WHERE p.degree = 'Bachelor' RETURN p,False,False,True
+Which workers are associated with the Financial Services industry and have a Master's degree,Complex Aggregation Queries,"MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}), (p)-[:EDUCATED_AT]->(:School) WHERE p.degree = 'Master' RETURN p",False,False,True
+How many workers in the Hospital and Health Care industry speak English and have a Bachelor's degree,Complex Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}), (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) WHERE p.degree = 'Bachelor' RETURN COUNT(DISTINCT p) AS num_workers",False,False,True
+"Find all workers who speak Spanish and their respective age, companies they work in and country where they live",Complex Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'})-[:WORKS_IN]->(c:Company), (p)-[:LIVES_IN]->(country:Country) RETURN p.age, collect(c.name), country.name",False,False,False
+Find all workers associated with the Higher Education industry and have a Master's degree,Complex Aggregation Queries,MATCH (p:Person {degree: 'Master'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Higher Education'}) RETURN p,False,False,True
+List the first 3 workers who live in Canada and speak French,Complex Aggregation Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country), (p)-[:SPEAKS]->(l:Language) WHERE c.name = 'Canada' AND l.name = 'French' RETURN p.name LIMIT 3",False,False,True
+List the first 5 companies located in the United States,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE c.country.name = 'United States' RETURN DISTINCT c.name LIMIT 5,False,False,False
+What are the first 5 companies in the IT Services and IT Consulting industry,Complex Aggregation Queries,"
+            MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'} ) RETURN c LIMIT 5",False,False,True
+List all workers associated with the Advertising Services industry,Complex Aggregation Queries,"MATCH (n:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Advertising Services' RETURN c.name, n.name",False,False,True
+Find all workers who speak French and have aMaster's degree,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) WHERE p.degree = 'Master' RETURN p,False,False,True
+Find all workers associated with the Software Development industry,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN c,False,False,True
+"Find all workers who speak German and their respective age, companies they work in and country where they live",Complex Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'German'})-[:WORKS_IN]->(c:Company) OPTIONAL MATCH (p)-[:LIVES_IN]->(co:Country) RETURN p, p.age, c, co",False,False,False
+What companies are associated with the Hospital and Health Care industry and have workers who speak English,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) WITH c MATCH (p:Person)-[r:WORKS_IN]->(c:Company) WHERE exists ((p)-[:SPEAKS]->(:Language {name: 'English'})) RETURN c,False,False,True
+What are the first 3 workers associated with the Higher Education industry,Complex Aggregation Queries,MATCH (w:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Higher Education' RETURN DISTINCT w LIMIT 3,False,False,True
+Find all workers who speak Spanish and live in the United States,Complex Aggregation Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'}), (p)-[:LIVES_IN]->(c:Country {name: 'United States'}) RETURN p",False,False,True
+What companies are located in the Advertising Services industry?,Verbose query,"MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) return c.name
+",False,False,False
+The first three workers who live in the United States and work in Real Estate industry,Verbose query,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'United States'})-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate'}) RETURN p LIMIT 3,False,False,False
+List the first 2 companies that are in the Financial Services industry,Verbose query,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN c.name LIMIT 2,False,False,True
+What companies do people who speak English work for?,Verbose query,MATCH (n:Person)-[:SPEAKS {name:'English'}]->()-[:WORKS_IN]->(indus:Company) RETURN DISTINCT indus.name,False,False,False
+List the top 2 countries where workers who speak Spanish live,Verbose query,"MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}) RETURN c.name, COUNT(*) as count ORDER BY count DESC LIMIT 2",False,False,True
+Find the top 5 workers who work in companies that are located in the Hospitals and Health Care industry,Verbose query,"MATCH (w:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'})
+WITH w, COUNT(DISTINCT w) AS company_count
+RETURN w.name AS worker_name, company_count
+ORDER BY company_count DESC
+LIMIT 5
+",False,False,False
+List the companies that workers with a Bachelor degree work for,Verbose query,"
+      MATCH (p:Person)-[:WORKS_IN]->(c:Company) WHERE p.degree = 'Bachelor' RETURN c.name AS company_name",False,False,True
+Find the workers who speak English and work in companies that are located in the Software Development industry,Verbose query,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'})}  RETURN p,False,False,True
+What companies are in the Higher Education industry?,Verbose query,MATCH (company:Company)-[:IS_IN]->(industry:Industry {name: 'Higher Education'}) RETURN company,False,False,True
+Find the workers who live in Canada and speak German,Verbose query,"MATCH (p:Person)-[:LIVES_IN]->(c:Country), (p)-[:SPEAKS]->(lan:Language) WHERE c.name = 'Canada' AND lan.name = 'German' RETURN p.name",False,False,False
+What are the names of the companies that workers with a Master degree work for?,Verbose query,MATCH (p:Person)-[:WORKS_IN]->(c:Company) WHERE p.degree = 'Master' RETURN c.name,False,False,True
+What are the top 2 countries where workers who speak French live?,Verbose query,"MATCH (n:Person)-[:SPEAKS]->(:Language {name: 'French'}), (n)-[:LIVES_IN]->(x:Country) RETURN x.name, count(n) as num ORDER BY num DESC LIMIT 2",False,False,True
+What companies are in the IT Services and IT Consulting industry?,Verbose query,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}) RETURN c,False,False,True
+List the first 3 companies that workers named Emily work for,Verbose query,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company) RETURN c LIMIT 3,False,False,False
+What are the first 2 countries where workers who speak German live?,Verbose query,"
+MATCH (p:Person)-[r:LIVES_IN]->(c:Country)
+WHERE exists{ (p)-[:SPEAKS]->(:Language {name: 'German'})}
+RETURN DISTINCT c.name LIMIT 2",False,False,True
+Find the companies that are in the Real Estate industry,Verbose query,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}) RETURN c,False,False,True
+What are the first 2 companies that workers with a Master degree work for?,Verbose query,"MATCH (p:Person {degree: 'Master'})-[:WORKS_IN]->(c:Company)
+RETURN c.name AS Company
+LIMIT 2",False,False,True
+What are the first 3 countries where workers who speak English live?,Verbose query,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c.name LIMIT 3,False,False,True
+What companies do workers who live in United States work for?,Verbose query,MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(com:Company) RETURN com,False,False,True
+What companies are in the Software Development industry?,Verbose query,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Software Development' RETURN c,False,False,True
+"What companies do people who speak English work for, who also have a bachelor's degree and live in the United States, with joining year 2017 and a maximum age of 28, first 3 results",Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'})-[:WORKS_IN]->(c:Company) WHERE p.joining_year = '2017' AND p.age < '28' AND p.degree = 'Bachelor' AND exists{ (p)-[:LIVES_IN]->(:Country {name: 'United States'})} RETURN c.name LIMIT 3,False,False,False
+"Which workers are linked to companies in the Higher Education sector, with a master's degree, whose first language is English, first 3 results",Simple Retrieval Queries,"MATCH (p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Higher Education'}), (p)-[:SPEAKS]->(:Language {name: 'English'}) WHERE p.degree = 'Master' RETURN p LIMIT 3",False,False,True
+"Which workers are linked to companies in the Hospitals and Health Care sector, with a master's degree, whose language is not English, first 3 results",Simple Retrieval Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}), (p)-[:SPEAKS]->(:Language {name: 'English'}), (p)-[:EDUCATED_AT]->(:School) WHERE p.degree = 'Master' RETURN DISTINCT p LIMIT 3",False,False,True
+"What companies do people work for, who have a master's degree, whose first language is English, first 3 results",Simple Retrieval Queries,"
+	  MATCH (p:Person {degree : 'Master'})-[r:SPEAKS]->(lan:Language {name:'English'}),(com:Company)<-[r1:WORKS_IN]-(p),(lan)<-[:SPEAKS]-(p)-[:SPEAKS]->(lan2:Language) where lan2.name<>'English' RETURN distinct p.name ,  p.age, collect(distinct lan.name) as LanguageswithEnglishfirst, collect(distinct com.name) as Companyname LIMIT 3",False,False,False
+"What companies do people work for, who have a master's degree and a joining year of 2017, first 3 results",Simple Retrieval Queries,"MATCH (p:Person {degree: 'Master', joining_year: '2017'})-[:WORKS_IN]->(c:Company) RETURN c.name LIMIT 3",False,False,True
+"What companies do people work for, who have a master's degree, whose language is not English and live in the United States, first 3 results",Simple Retrieval Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company), (p)-[:LIVES_IN]->(:Country {name: 'United States'}), (p)-[:SPEAKS]->(l:Language) WHERE p.degree = 'Master' AND l.name <> 'English' RETURN DISTINCT c LIMIT 3",False,False,True
+"What are the names of the workers who work for a company named Advertising Services and who have a bachelor's degree and speak English, first 3 results",Simple Retrieval Queries,"MATCH (worker:Person)-[:WORKS_IN]->(:Company {name: 'Advertising Services'}), (worker)-[:SPEAKS]->(l:Language)
+WHERE worker.degree = 'Bachelor' AND l.name = 'English'
+RETURN worker.name AS workers
+LIMIT 3",False,False,False
+"What companies are associated with workers in the United States, first 3 results",Simple Retrieval Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN c.name,False,False,True
+"How many workers live in the United States, first 3 results",Simple Retrieval Queries,MATCH (n:Person)-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN n LIMIT 3,False,False,True
+"What industries do workers named Emily work in, first 3 results",Simple Retrieval Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN DISTINCT i.name LIMIT 3,False,False,False
+"What are the names of companies that have some worker who is 25 years old and has a bachelor's degree, first 3 results",Simple Retrieval Queries,"MATCH (c:Company)<-[:WORKS_IN]-(p:Person {degree: 'Bachelor', age: '25'}) RETURN c.name LIMIT 3",False,False,True
+"What companies do people who speak German work for, first 3 results",Simple Retrieval Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'German'}) RETURN c LIMIT 3,False,False,True
+"What companies do workers named Alice work for, first 3 results",Simple Retrieval Queries,MATCH (p:Person {name: 'Alice'})-[:WORKS_IN]->(c:Company) RETURN c LIMIT 3,False,False,False
+"What are the names of workers who have a bachelor's degree and have joined in the year 2016, first 3 results",Simple Retrieval Queries,"MATCH (p:Person)
+WHERE p.degree = 'Bachelor' AND toInteger(p.joining_year) = 2016
+RETURN p.name AS person_name
+LIMIT 3
+",False,False,False
+"How many workers live in Canada that speak German, first 3 results",Simple Retrieval Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country {name: 'Canada'}), (p)-[:SPEAKS]->(l:Language {name: 'German'}) RETURN p LIMIT 3",False,False,False
+"What are the name of the companies in the United States that are in the industry of Higher Education, first 3 results",Simple Retrieval Queries,"MATCH (a:Company)-[:IS_IN]->(i:Industry {name: 'Higher Education'}), (a:Company)-[:IS_LOCATED_IN]->(s:Country {name: 'United States'}) RETURN a.name LIMIT 3",False,False,False
+"What are the names of companies that have some worker who speaks French and has a bachelor's degree and has a joining year of 2017, first 3 results",Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) WHERE exists{(p)-[:WORKS_IN]->(:Company)} AND p.degree = 'Bachelor' AND p.joining_year = '2017' WITH DISTINCT p MATCH (p)-[:WORKS_IN]->(c:Company) RETURN DISTINCT c.name LIMIT 3,False,False,True
+"What companies are associated with workers who live in Canada, first 3 results",Simple Retrieval Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company) WHERE exists { (p)-[:LIVES_IN]->(:Country {name: 'Canada'}) } RETURN c LIMIT 3,False,False,True
+"What companies are associated with workers in the Hospitals and Health Care industry, first 3 results",Simple Retrieval Queries,MATCH (i:Industry {name: 'Hospitals and Health Care'})<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person) RETURN c.name LIMIT 3,False,False,True
+"What companies do workers who speak French and also have a bachelor's degree and a joining year of 2017 work in, first 3 results",Simple Retrieval Queries,MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'French'})-[:WORKS_IN]->(c:Company) WHERE p.degree = 'Bachelor' AND p.joining_year = '2017' RETURN DISTINCT c.name LIMIT 3,False,False,False
+What companies do workers who speak Spanish work in?  Limit to the top 3 companies,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (p)-[:WORKS_IN]->(c:Company)
+RETURN distinct(c.name) as company_name
+ORDER BY company_name
+LIMIT 3",False,False,True
+What companies are in the 'Higher Education' industry and have workers who speak English?  Limit to the top 5 results,Complex Retrieval Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Higher Education'}) WITH c MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'})-[:WORKS_IN]->(c) RETURN c LIMIT 5,False,False,False
+Which workers who live in the United States are older than 30?  Limit to the top 3 results,Complex Retrieval Queries,MATCH (p:Person)-[:LIVES_IN]->(c:Country) WHERE c.name = 'United States' AND p.age > '30' RETURN p LIMIT 3,False,False,True
+What companies do workers named Emily work in?  Limit to the top 3 results,Complex Retrieval Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company) RETURN c.name LIMIT 3,False,False,False
+In which countries do workers who speak German live?  Limit to the top 3 results,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'German'}), (p)-[:LIVES_IN]->(c:Country) RETURN c LIMIT 3",False,False,True
+Which workers who work in the 'Financial Services' industry speak French?  Limit to the top 3 results,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN p.name limit 3",False,False,True
+What companies do workers who were educated at 'California College of the Arts' work in?  Limit to the top 5 results,Complex Retrieval Queries,MATCH (p:Person)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'})-[:WORKS_IN]->(c:Company) RETURN DISTINCT c.name LIMIT 5,False,False,False
+Which workers who live in Canada work in the 'Advertising Services' industry?  Limit to the top 3 results,Complex Retrieval Queries,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'Canada'}) WITH p MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) RETURN DISTINCT p LIMIT 3,False,False,True
+In which countries do workers who speak Spanish and work in the 'IT Services and IT Consulting' industry live?  Limit to the top 3 results,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'}), (p)-[:LIVES_IN]->(c:Country) RETURN c.name AS Country LIMIT 3",False,False,True
+Which workers who speak English and work in the 'Real Estate' industry are younger than 40?  Limit to the top 5 results,Complex Retrieval Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'})
+MATCH (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'})
+WHERE toInteger(p.age) < 40
+RETURN p.name AS person_name, p.age AS person_age
+LIMIT 5
+",False,False,False
+What companies are located in the technology industry?,Simple Aggregation Queries,MATCH (p:Company)-[:IS_IN]->(l:Industry {name: 'Technology'}) RETURN p,False,False,False
+In which countries do workers who speak Spanish live?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'})-[:LIVES_IN]->(c:Country) return c.name,False,False,False
+What companies do workers named John work in?,Simple Aggregation Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+How many workers in Hospital and Health Care industry live in Canada?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) MATCH (p)-[:LIVES_IN]->(country:Country {name:'Canada'}) RETURN count(DISTINCT p) AS num_workers,False,False,True
+Which workers speak French?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) RETURN p,False,False,True
+What companies are located in the Advertising Services industry?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) RETURN c.name,False,False,True
+Where do workers named Alice live?,Simple Aggregation Queries,MATCH (p:Person {name: 'Alice'})-[:LIVES_IN]->(c:Country) RETURN c.name,False,False,False
+How many companies are in the Financial Services industry?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) return count(c) as count,False,False,True
+How many workers in the Real Estate industry live in the United States?,Simple Aggregation Queries,MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}) RETURN count(DISTINCT p),False,False,True
+What companies do workers who speak English work in?,Simple Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+How many workers live in Canada and speak French?,Simple Aggregation Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country), (p)-[:SPEAKS]->(lan:Language) WHERE c.name = 'Canada' AND lan.name = 'French' RETURN COUNT(DISTINCT p)",False,False,True
+What are the names of workers in the Higher Education industry?,Simple Aggregation Queries,MATCH (i:Industry {name: 'Higher Education'})<-[:IS_IN]-(c:Company)<-[:WORKS_IN]-(p:Person) RETURN DISTINCT p.name,False,False,True
+What are the names of companies in the IT Services and IT Consulting industry?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'IT Services and IT Consulting' RETURN c.name,False,False,True
+How many workers are there in the Hospitals and Health Care industry?,Simple Aggregation Queries,MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) RETURN count(distinct p) AS count,False,False,True
+How many workers in the Software Development industry live in the United States?,Simple Aggregation Queries,MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) RETURN count(DISTINCT p.age) AS num_workers,False,False,True
+What companies are located in the Real Estate industry?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name = 'Real Estate' RETURN c,False,False,True
+Which workers live in the United States and work in the Financial Services industry?,Simple Aggregation Queries,"MATCH (p:Person)-[:LIVES_IN]->(c:Country)-[:WORKS_IN]->(:Company)-[:IS_IN]->(i:Industry)
+WHERE c.name = 'United States' AND i.name = 'Financial Services'
+RETURN p",False,False,False
+How many workers in the Advertising Services industry live in France?,Simple Aggregation Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}), (c)<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(:Country {name: 'France'}) RETURN count(p), c",False,False,False
+How many workers are there in the Financial Services industry?,Simple Aggregation Queries,MATCH (i:Industry {name: 'Financial Services'})-[:IS_IN]-(c:Company)-[:WORKS_IN]-(p:Person) RETURN count(p) as worker_count,False,False,True
+How many workers in the IT Services and IT Consulting industry live in Germany?,Simple Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'})<-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(:Country {name: 'Germany'}) RETURN count(p)  as workers_count,False,False,True
+What are the names of the companies where workers who speak German work?,Pathfinding Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'German'}) RETURN DISTINCT c.name,False,False,True
+What are the names of companies where workers who speak Spanish live?,Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'})-[:LIVES_IN]->(c:Country)<-[:LIVES_IN]-(p1:Person)-[:WORKS_IN]->(com:Company) RETURN com.name,False,False,False
+Which workers have a degree from the University of South Florida?,Pathfinding Queries,MATCH (p:Person)-[:EDUCATED_AT]->(s:School {name: 'University of South Florida'}) RETURN p,False,False,True
+What are the names of companies in the Advertising Services industry where workers who speak English work?,Pathfinding Queries,MATCH (l:Language {name: 'English'})<-[sp:SPEAKS]-(p:Person)-[:WORKS_IN]->(c:Company)-[r:IS_IN]->(i:Industry {name: 'Advertising Services'}) RETURN c.name AS companies,False,False,True
+What are the names of the companies where workers who speak English and French live in Canada?,Pathfinding Queries,"MATCH (c:Country {name: 'Canada'})-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(l:Language {name: 'French'}), (p)-[:SPEAKS]->(leng:Language {name: 'English'}), (p)-[:WORKS_IN]->(comp:Company) RETURN comp.name",False,False,False
+What companies do workers named Haris Nadeem work in?,Pathfinding Queries,MATCH (p:Person {name: 'Haris Nadeem'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,True
+Which workers have a Bachelor's degree and live in the United States?,Pathfinding Queries,MATCH (p:Person {degree: 'Bachelor'})-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN p,False,False,True
+What are the names of the companies in the Hospitals and Health Care industry where workers who speak Spanish work?,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (c:Company)-[:IS_IN]->(:Industry {name: 'Hospitals and Health Care'}) WHERE exists{ (p)-[:WORKS_IN]->(c)} RETURN c.name",False,False,True
+Which workers speak French and have a Master's degree?,Pathfinding Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) WHERE p.degree = 'Master' RETURN p,False,False,True
+What are the names of the companies where workers who speak English and Spanish live in the United States?,Pathfinding Queries,"MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(l:Language) WHERE l.name IN ['English', 'Spanish'] WITH p MATCH (p)-[:WORKS_IN]->(co:Company) RETURN co.name",False,False,True
+What are the names of companies in the Financial Services industry where workers who speak English work?,Pathfinding Queries,MATCH (l:Language {name: 'English'})<-[sp:SPEAKS]-(p:Person)-[:WORKS_IN]->(c:Company)-[r:IS_IN]->(i:Industry {name: 'Financial Services'}) RETURN c.name AS names,False,False,True
+What companies are located in the Higher Education industry where workers who speak English work?,Pathfinding Queries,"MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Higher Education'}), (c)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) RETURN c.name",False,False,True
+What companies are located in the Real Estate industry where workers who speak English work?,Pathfinding Queries,MATCH (l:Language {name: 'English'})-[:IS_SPOKEN_BY]->(p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Real Estate' }) RETURN c,False,False,False
+In which country do workers named Lindsey Boland live?,Pathfinding Queries,MATCH (p:Person {name: 'Lindsey Boland'})-[:LIVES_IN]->(c:Country) RETURN c,False,False,True
+What companies do workers named Emily associated with?,Pathfinding Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company) RETURN c,False,False,False
+What are the names of companies where workers who speak Spanish live in Spain?,Pathfinding Queries,MATCH (c:Company)<-[:WORKS_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'Spanish'})-[:LIVES_IN]->(:Country {name: 'Spain'}) RETURN c.name,False,False,False
+What companies are located in the Technology industry where workers who speak English work?,Pathfinding Queries,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'English'}), (c:Company)-[:IS_IN]->(:Industry {name: 'Software Development'}) WHERE exists{ (p)-[:WORKS_IN]->(c) } RETURN c.name",False,False,True
+What companies are located in the Advertising Services industry where workers who speak English work?,Pathfinding Queries,"MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}), (p:Person)-[:WORKS_IN]->(c), (p)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c.name",False,False,True
+What companies are located in the Hospitals and Health Care industry where workers who speak English work?,Pathfinding Queries,MATCH (l:Language {name: 'English'})-[:IS_SPOKEN_BY]->(p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}) RETURN DISTINCT c.name,False,False,False
+What companies are located in the Higher Education industry where workers who speak English work?,Pathfinding Queries,MATCH (l:Language {name: 'English'})<-[rel1:SPEAKS]-(p:Person)-[rel2:WORKS_IN]->(comp:Company)-[rel3:IS_IN]->(i:Industry {name: 'Higher Education'}) RETURN comp.name,False,False,True
+Which workers live in Canada and speak German?,Complex Aggregation Queries,MATCH (p:Person)-[:LIVES_IN]->(c:Country)-[:SPEAKS]->(l:Language {name: 'German'}) WHERE c.name = 'Canada' RETURN p,False,False,False
+What industries are workers named Emily associated with?,Complex Aggregation Queries,MATCH (p:Person {name: 'Emily'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i,False,False,False
+Which workers speak French?,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'French'}) RETURN p,False,False,True
+What companies do workers named John work in?,Complex Aggregation Queries,"MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company)
+RETURN c.name",False,False,False
+How many workers in Hospital and Health Care industry live in France?,Complex Aggregation Queries,"MATCH (p:Person)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Hospitals and Health Care'}), (p)-[:LIVES_IN]->(co:Country {name: 'France'}) RETURN COUNT(DISTINCT p) AS num_workers",False,False,True
+What companies are located in the technology industry?,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry) WHERE i.name CONTAINS 'tech' RETURN c,False,False,False
+Where do workers named Alice live?,Complex Aggregation Queries,MATCH (p:Person {name: 'Alice'})-[:LIVES_IN]->(c:Country) RETURN c,False,False,False
+Which workers speak Spanish and live in the United States?,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'Spanish'}) WHERE exists{ (p)-[:LIVES_IN]->(:Country {name: 'United States'})} RETURN p,False,False,True
+Who are the top 5 workers with the highest degree?,Complex Aggregation Queries,MATCH (n:Person) RETURN n ORDER BY n.degree DESC LIMIT 5,False,False,True
+Who are the top 5 workers with the highest age?,Complex Aggregation Queries,"MATCH (p:Person) RETURN p.name, p.age ORDER BY p.age DESC LIMIT 5",False,False,True
+What are the first 3 companies in the Advertising Services industry?,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) RETURN c LIMIT 3,False,False,True
+What are the first 3 schools that workers named Paul Lukes attended?,Complex Aggregation Queries,MATCH (s:School)<-[:EDUCATED_AT]-(p:Person {name: 'Paul Lukes'}) RETURN s LIMIT 3,False,False,True
+What are the first 3 countries where workers speak English?,Complex Aggregation Queries,MATCH (c:Country)<-[:LIVES_IN]-(p:Person)-[:SPEAKS]->(:Language {name: 'English'}) RETURN c.name LIMIT 3,False,False,True
+What are the first 3 companies in the Financial Services industry?,Complex Aggregation Queries,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Financial Services'}) RETURN c.name LIMIT 3,False,False,True
+What are the first 3 workers who speak German and live in Canada?,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'German'}) MATCH (p)-[:LIVES_IN]->(c:Country {name: 'Canada'}) RETURN p LIMIT 3,False,False,False
+What are the first 3 industries that workers named John are associated with?,Complex Aggregation Queries,MATCH (p:Person {name: 'John'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry) RETURN i LIMIT 3,False,False,False
+How many workers in the IT Services and IT Consulting industry speak English?,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'English'}) WHERE exists{ (p)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'IT Services and IT Consulting'})} RETURN count(p) as count,False,False,True
+How many workers in the Real Estate industry live in the United States?,Complex Aggregation Queries,MATCH (c:Country {name: 'United States'})<-[:LIVES_IN]-(p:Person)-[:WORKS_IN]->(:Company)-[:IS_IN]->(:Industry {name: 'Real Estate'}) RETURN count(DISTINCT p.age) AS num_workers,False,False,True
+How many workers speak French and work in the Advertising Services industry?,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(lan:Language {name: 'French'}) MATCH (p)-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry {name: 'Advertising Services'}) RETURN count(p) as number,False,False,True
+How many workers speak English and live in Canada?,Complex Aggregation Queries,MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}) WHERE exists{ (p)-[:LIVES_IN]->(:Country {name: 'Canada'})} RETURN count(p) as num_workers,False,False,True
+Which person speaks the most number of languages? Consider the top 5 results,Verbose query,"MATCH (p:Person)-[:SPEAKS]->(l:Language) RETURN p, COUNT(DISTINCT l) as languages ORDER BY languages DESC LIMIT 5",False,False,True
+List the first 3 companies that the person named 'Lindsey Boland' has worked in,Verbose query,MATCH (n:Person {name: 'Lindsey Boland'})-[:WORKS_IN]->(c:Company) RETURN c LIMIT 3,False,False,True
+What are the distinct countries that workers who speak Spanish live in? Top 5 results,Verbose query,"MATCH (n:Person)-[:SPEAKS]->(:Language {name: 'Spanish'}), (n)-[:LIVES_IN]->(m:Country) RETURN DISTINCT m.name ORDER BY m.name LIMIT 5",False,False,True
+List the companies that 'Haris Nadeem' has worked in. Show first 3 results,Verbose query,MATCH (p:Person {name: 'Haris Nadeem'})-[:WORKS_IN]->(c:Company) RETURN c LIMIT 3,False,False,True
+How many workers who graduated from Centennial College live in Canada? Display first 3 results,Verbose query,MATCH (p:Person)-[:LIVES_IN]->(:Country {name: 'Canada'}) MATCH (p)-[:EDUCATED_AT]->(:School {name: 'Centennial College'}) RETURN p LIMIT 3,False,False,True
+What are the top 5 industries that workers who graduated from California College of the Arts are associated with,Verbose query,"MATCH (p:Person)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'})-[:WORKS_IN]->(c:Company)-[:IS_IN]->(i:Industry)
+RETURN i.name, COUNT(*) as count
+ORDER BY count DESC
+LIMIT 5",False,False,False
+List the top 3 countries where workers named 'Paul Lukes' live,Verbose query,"MATCH (p:Person {name: 'Paul Lukes'})-[:LIVES_IN]->(c:Country) RETURN c.name LIMIT 3
+",False,False,False
+List the companies that are in the Advertising Services industry. First 3 results,Verbose query,MATCH (c:Company)-[:IS_IN]->(:Industry {name: 'Advertising Services'}) RETURN c.name LIMIT 3,False,False,True
+Which workers are associated with the most number of companies? Display first 3 results,Verbose query,"MATCH (n:Person)-[r:WORKS_IN]->(m:Company)
+        RETURN n.name, COLLECT(m.name) AS company_names, COUNT(*) as num_companies
+        ORDER BY num_companies DESC
+ LIMIT 3",False,False,True
+What are the top 3 countries where workers from Search Engine People live,Verbose query,"MATCH (c:Company {name: 'Search Engine People'}) <-[:WORKS_IN]-(p:Person)-[:LIVES_IN]->(cnt:Country) RETURN cnt.name, COUNT(cnt) ORDER BY COUNT(cnt) DESC LIMIT 3",False,False,True
+Which person has worked in the most number of companies? First 3 results,Verbose query,"MATCH (p:Person)-[r:WORKS_IN]->(c:Company)
+RETURN p.name, collect(c.name) as companies
+ORDER BY size(companies) DESC
+LIMIT 3",False,False,True
+List the workers who speak English and live in the United States. Display first 5 results,Verbose query,"MATCH (p:Person)-[:SPEAKS]->(l:Language {name: 'English'}), (p)-[:LIVES_IN]->(c:Country {name: 'United States'}) RETURN p LIMIT 5",False,False,True
+List the companies that workers who speak French are associated with. Show top 3 results,Verbose query,"MATCH (p:Person)-[:SPEAKS]->(:Language {name: 'French'}), (p)-[:WORKS_IN]->(c:Company) RETURN DISTINCT(c.name) LIMIT 3",False,False,True
+What are the top 5 countries where workers who graduated from the University of Healthcare and Social Service live,Verbose query,"MATCH (c:School {name: 'University of Healthcare and Social Service'})<-[:EDUCATED_AT]-(p:Person)-[:LIVES_IN]->(co:Country) RETURN co.name, COUNT(p) as cnt ORDER BY cnt DESC LIMIT 5",False,False,False
+How many workers from the University of Healthcare and Social Service live in Canada? First 3 results,Verbose query,MATCH (p:Person)-[:EDUCATED_AT]->(s:School {name: 'University of Healthcare and Social Service'})-[:LIVES_IN]->(c:Country {name: 'Canada'}) MATCH (p)-[:WORKS_IN]->(comp:Company) RETURN DISTINCT comp.name LIMIT 3,False,False,False
+What are the top 5 countries where workers who graduated from Ruby College of Higher Education live,Verbose query,"MATCH (s:School {name: 'Ruby College of Higher Education'})
+      <-[:EDUCATED_AT]-(p:Person)-[:LIVES_IN]->(co:Country)
+      RETURN co.name AS countries, COUNT(p.name) AS count
+      ORDER BY count DESC
+      LIMIT 5",False,False,False
+How many workers who graduated from California College of the Arts live in the United States? Show first 3 results,Verbose query,"
+MATCH (p:Person)-[:EDUCATED_AT]->(:School {name: 'California College of the Arts'})-[:LIVES_IN]->(:Country {name: 'United States'}) RETURN p LIMIT 3",False,False,False
+Which workers live in the countries where French is commonly spoken? First 3 countries,Verbose query,"MATCH (n:Person)-[:LIVES_IN]->(c:Country)<-[:IS_COMMONLY_SPOKEN]-(l:Language {name: 'French'}) RETURN n.name, c.name LIMIT 3",False,False,False
+What are the companies that the person named 'Mev Sime' has worked in? List the first 3 companies,Verbose query,"
+MATCH (p:Person { name: 'Mev Sime' })-[:WORKS_IN]->(c:Company) RETURN c LIMIT 3",False,False,False

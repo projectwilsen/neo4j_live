@@ -2,6 +2,11 @@
 
 Welcome to the resources for the Neo4j live session titled **"Enhancing Text2Cypher with In-Context Learning and Fine-Tuning."**
 
+You can watch the live session recording here:
+
+[![Neo4j Live](https://img.youtube.com/vi/a16xUTmb1BU/0.jpg)](https://www.youtube.com/live/a16xUTmb1BU?si=Zg8OvQfsFoZhgCdl)
+
+
 ## Introduction
 
 Text2Cypher generation is a crucial step in unlocking the full potential of graph databases. By bridging the gap between natural language and Cypher queries, we're making it easier to retrieve complex, interconnected data with precision. This session will guide you through the process of enhancing Text2Cypher models using in-context learning and fine-tuning techniques, enabling more accurate and efficient data retrieval.
